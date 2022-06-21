@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,6 +32,11 @@ public class MMakerController {
             @PathVariable final String monsterSsn
     ){
         return mMakerService.getDetailMonster(monsterSsn);
+    }
+
+    @GetMapping("/all-monster")
+    public List<DetailMonsterDto> getAllListMonster(){
+        return mMakerService.getAllDetailMonster();
     }
 
     @PostMapping("/create-monster")
