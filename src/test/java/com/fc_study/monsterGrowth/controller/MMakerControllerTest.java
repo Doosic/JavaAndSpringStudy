@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.fc_study.monsterGrowth.code.StatusCode.*;
 import static com.fc_study.monsterGrowth.entity.MonsterEntity.MonsterLevel.ADULT;
 import static com.fc_study.monsterGrowth.entity.MonsterEntity.MonsterLevel.BABY;
 import static com.fc_study.monsterGrowth.entity.MonsterEntity.MonsterType.FLY;
@@ -51,12 +52,12 @@ class MMakerControllerTest {
     @MockBean
     private MMakerService mMakerService;
 
-    private MonsterEntity getDefaultMonster(Long id, String ssn, String name){
+    private MonsterEntity getDefaultMonster(Long id, String ssn, String name, StatusCode statusCode){
         return MonsterEntity.builder()
             .id(id)
             .monsterLevel(BABY)
             .monsterType(FLY)
-            .statusCode(StatusCode.HEALTHY)
+            .statusCode(statusCode)
             .ssn(ssn)
             .name(name)
             .age(3)
@@ -69,7 +70,7 @@ class MMakerControllerTest {
                 .id(1L)
                 .monsterLevel(BABY)
                 .monsterType(FLY)
-                .statusCode(StatusCode.HEALTHY)
+                .statusCode(HEALTHY)
                 .ssn("12345612345123")
                 .name("BabyMonster")
                 .age(3)
@@ -81,7 +82,7 @@ class MMakerControllerTest {
         return UpdateMonsterDto.Request.builder()
                 .monsterLevel(BABY)
                 .monsterType(FLY)
-                .statusCode(StatusCode.SICK)
+                .statusCode(SICK)
                 .ssn("96050312341234")
                 .age(3)
                 .height(170)
@@ -107,9 +108,9 @@ class MMakerControllerTest {
     @DisplayName("Monster get Test")
     void getDetailMonster() throws Exception{
         // given
-        MonsterEntity defaultMonster = getDefaultMonster(1L, "12345612345123", "Tiger");
+        MonsterEntity defaultMonster = getDefaultMonster(1L, "12345612345123", "Tiger", HEALTHY);
         given(mMakerService.getDetailMonster(any()))
-                .willReturn(DetailMonsterDto.fromEntity(getDefaultMonster(1L, "12345612345123", "Tiger")));
+                .willReturn(DetailMonsterDto.fromEntity(getDefaultMonster(1L, "12345612345123", "Tiger", HEALTHY)));
 
         // when
         // then
@@ -127,9 +128,9 @@ class MMakerControllerTest {
     void getAllList() throws Exception{
         // given
         List<MonsterEntity> monsterList  = new ArrayList<>();
-        monsterList.add(getDefaultMonster(1L, "First Monster", "96050312341231"));
-        monsterList.add(getDefaultMonster(2L, "Second Monster", "96050312341232"));
-        monsterList.add(getDefaultMonster(3L, "Third Monster", "96050312341233"));
+        monsterList.add(getDefaultMonster(1L, "First Monster", "96050312341231", HEALTHY));
+        monsterList.add(getDefaultMonster(2L, "Second Monster", "96050312341232", HEALTHY));
+        monsterList.add(getDefaultMonster(3L, "Third Monster", "96050312341233", HEALTHY));
 
         given(mMakerService.getAllDetailMonster())
                 .willReturn(monsterList.stream()
@@ -152,7 +153,7 @@ class MMakerControllerTest {
     void createMonster() throws Exception {
         // given: 어떠한 데이터가 준비되었을 때, 특정 메소드가 실행되는 경우 실제 Return 을 줄 수 없기
         //        때문에 아래와 같이 가정 사항을 만들어준다.
-        MonsterEntity defaultMonster = getDefaultMonster(1L, "96050312341234", "Tiger");
+        MonsterEntity defaultMonster = getDefaultMonster(1L, "96050312341234", "Tiger", HEALTHY);
         given(mMakerService.createMonster(getCreateRequest()))
                 .willReturn(CreateMonsterDto.TestResponse.fromEntity(defaultMonster));
 
@@ -175,7 +176,7 @@ class MMakerControllerTest {
     @DisplayName("Monster updated Test")
     void updateMonster() throws Exception {
         // given
-        MonsterEntity updateMonster = getDefaultMonster(1L, "96050312341234","updateMonster");
+        MonsterEntity updateMonster = getDefaultMonster(1L, "96050312341234","updateMonster", HEALTHY);
 
         given(mMakerService.updateMonster(anyString(), any()))
                 .willReturn(DetailMonsterDto.fromEntity(updateMonster));
@@ -198,12 +199,22 @@ class MMakerControllerTest {
     @DisplayName("Monster delete Test")
     void deleteMonster() throws Exception{
         // given
-
+        MonsterEntity deleteMonster = getDefaultMonster(1L,"96050312341234", "deleteMonster", DEAD);
+        given(mMakerService.deleteMonster(anyString()))
+                .willReturn(
+                        DetailMonsterDto.fromEntity(deleteMonster)
+                );
 
         // when
-
-
         // then
+        mockMvc.perform(
+                delete("/delete-monster/"+deleteMonster.getSsn())
+                        .contentType(contentType)
+                        .content(deleteMonster.getSsn())
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+        then(mMakerService).should(times(1)).deleteMonster(deleteMonster.getSsn());
 
     }
 
