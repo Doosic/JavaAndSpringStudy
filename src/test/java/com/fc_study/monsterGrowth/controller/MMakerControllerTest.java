@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc_study.monsterGrowth.code.StatusCode;
 import com.fc_study.monsterGrowth.dto.CreateMonsterDto;
 import com.fc_study.monsterGrowth.dto.DetailMonsterDto;
+import com.fc_study.monsterGrowth.dto.UpdateMonsterDto;
 import com.fc_study.monsterGrowth.entity.MonsterEntity;
 import com.fc_study.monsterGrowth.repository.MonsterRepository;
 import com.fc_study.monsterGrowth.service.MMakerService;
@@ -36,8 +37,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,6 +72,17 @@ class MMakerControllerTest {
                 .statusCode(StatusCode.HEALTHY)
                 .ssn("12345612345123")
                 .name("BabyMonster")
+                .age(3)
+                .height(170)
+                .weight(73)
+                .build();
+    }
+    private UpdateMonsterDto.Request getUpdateMonster(){
+        return UpdateMonsterDto.Request.builder()
+                .monsterLevel(BABY)
+                .monsterType(FLY)
+                .statusCode(StatusCode.SICK)
+                .ssn("96050312341234")
                 .age(3)
                 .height(170)
                 .weight(73)
@@ -164,13 +175,23 @@ class MMakerControllerTest {
     @DisplayName("Monster updated Test")
     void updateMonster() throws Exception {
         // given
+        MonsterEntity updateMonster = getDefaultMonster(1L, "96050312341234","updateMonster");
 
+        given(mMakerService.updateMonster(anyString(), any()))
+                .willReturn(DetailMonsterDto.fromEntity(updateMonster));
 
         // when
-
-
         // then
-
+        mockMvc.perform(
+                put("/update-monster")
+                        .contentType(contentType)
+                        .content(
+                                new ObjectMapper().writeValueAsString(
+                                getUpdateMonster()
+                        )))
+                .andExpect(status().isOk())
+                .andDo(print());
+        then(mMakerService).should(times(1)).updateMonster(anyString(),any());
     }
 
     @Test

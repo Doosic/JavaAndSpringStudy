@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fc_study.monsterGrowth.dto.CreateMonsterDto;
 import com.fc_study.monsterGrowth.dto.DetailMonsterDto;
 import com.fc_study.monsterGrowth.dto.MonsterDto;
+import com.fc_study.monsterGrowth.dto.UpdateMonsterDto;
 import com.fc_study.monsterGrowth.service.MMakerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,13 @@ public class MMakerController {
             @Valid @RequestBody CreateMonsterDto.Request request
     ){
         return mMakerService.createMonster(request);
+    }
+
+    @PutMapping("/update-monster")
+    public DetailMonsterDto updateMonster(
+            @Valid @RequestBody UpdateMonsterDto.Request request
+    ){
+        return mMakerService.updateMonster(request.getSsn(), request);
     }
 
 }
