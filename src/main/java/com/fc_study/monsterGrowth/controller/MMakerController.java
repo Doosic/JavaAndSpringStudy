@@ -26,18 +26,18 @@ public class MMakerController {
         둘중 하나만 사용하는 것이 아닌 복합적으로 사용할때도 있으며 방법의 차이일뿐 자신의 개발 프로젝트의
         방향에 맞게끔 사용하면 된다.
     */
+    @GetMapping("/detail-monster/{monsterSsn}")
+    public DetailMonsterDto getDetailMonster(
+            @PathVariable final String monsterSsn
+    ){
+        return mMakerService.getDetailMonster(monsterSsn);
+    }
+
     @PostMapping("/create-monster")
     public CreateMonsterDto.Response createMonster(
             @Valid @RequestBody CreateMonsterDto.Request request
     ){
         return mMakerService.createMonster(request);
-    }
-
-    @GetMapping("/detail-monster")
-    public DetailMonsterDto getMonsterDetail(
-            @PathVariable final String monsterSsn
-    ){
-        return mMakerService.getDetailMonster(monsterSsn);
     }
 
 }

@@ -3,6 +3,7 @@ package com.fc_study.monsterGrowth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc_study.monsterGrowth.code.StatusCode;
 import com.fc_study.monsterGrowth.dto.CreateMonsterDto;
+import com.fc_study.monsterGrowth.dto.DetailMonsterDto;
 import com.fc_study.monsterGrowth.entity.MonsterEntity;
 import com.fc_study.monsterGrowth.repository.MonsterRepository;
 import com.fc_study.monsterGrowth.service.MMakerService;
@@ -33,6 +34,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -83,15 +85,22 @@ class MMakerControllerTest {
 
     @Test
     @DisplayName("Monster get Test")
-    void getMonster() throws Exception{
+    void getDetailMonster() throws Exception{
         // given
-
+        given(mMakerService.getDetailMonster(any()))
+                .willReturn(DetailMonsterDto.fromEntity(responseMonster));
 
         // when
-
+        DetailMonsterDto result = mMakerService.getDetailMonster(any());
 
         // then
-
+        mockMvc.perform(
+                get("/detail-monster/"+responseMonster.getSsn())
+                        .contentType(contentType)
+                        .content(responseMonster.getSsn()))
+                .andExpect(status().isOk())
+                .andDo(print());
+        then(mMakerService).should(times(1)).getDetailMonster(responseMonster.getSsn());
     }
 
     @Test
