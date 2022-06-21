@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fc_study.monsterGrowth.dto.CreateMonsterDto;
 import com.fc_study.monsterGrowth.dto.DetailMonsterDto;
 import com.fc_study.monsterGrowth.dto.MonsterDto;
+import com.fc_study.monsterGrowth.dto.UpdateMonsterDto;
 import com.fc_study.monsterGrowth.service.MMakerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,6 +28,18 @@ public class MMakerController {
         둘중 하나만 사용하는 것이 아닌 복합적으로 사용할때도 있으며 방법의 차이일뿐 자신의 개발 프로젝트의
         방향에 맞게끔 사용하면 된다.
     */
+    @GetMapping("/detail-monster/{monsterSsn}")
+    public DetailMonsterDto getDetailMonster(
+            @PathVariable final String monsterSsn
+    ){
+        return mMakerService.getDetailMonster(monsterSsn);
+    }
+
+    @GetMapping("/all-monster")
+    public List<DetailMonsterDto> getAllListMonster(){
+        return mMakerService.getAllDetailMonster();
+    }
+
     @PostMapping("/create-monster")
     public CreateMonsterDto.Response createMonster(
             @Valid @RequestBody CreateMonsterDto.Request request
@@ -33,11 +47,11 @@ public class MMakerController {
         return mMakerService.createMonster(request);
     }
 
-    @GetMapping("/detail-monster")
-    public DetailMonsterDto getMonsterDetail(
-            @PathVariable final String monsterSsn
+    @PutMapping("/update-monster")
+    public DetailMonsterDto updateMonster(
+            @Valid @RequestBody UpdateMonsterDto.Request request
     ){
-        return mMakerService.getDetailMonster(monsterSsn);
+        return mMakerService.updateMonster(request.getSsn(), request);
     }
 
 }
