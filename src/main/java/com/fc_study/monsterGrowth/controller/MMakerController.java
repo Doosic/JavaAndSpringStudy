@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.xml.soap.Detail;
 import java.util.List;
 
 @Slf4j
@@ -52,6 +53,13 @@ public class MMakerController {
             @Valid @RequestBody UpdateMonsterDto.Request request
     ){
         return mMakerService.updateMonster(request.getSsn(), request);
+    }
+
+    @DeleteMapping("/delete-monster/{monsterSsn}")
+    public DetailMonsterDto deleteMonster(
+            @PathVariable final String monsterSsn
+    ){
+        return mMakerService.deleteMonster(monsterSsn);
     }
 
 }
