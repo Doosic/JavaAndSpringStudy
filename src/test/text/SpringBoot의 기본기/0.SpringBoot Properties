@@ -1,0 +1,48 @@
+# SpringBoot Properties
+    - 스프링 부트의 기본 기능 전체를 튜닝하는 부트 전용 설정 프로퍼티
+      부트에서 사용하는 많은 기능들에 대한 설정들을 지원하고있다.
+    - classpath:application.properties, application.yml 로 제어가능
+      이때 application 이라는 이름은 예약어이다. application 이라는 이름으로
+      저장을 해두고 확장자도 properties 또는 yml 로 해두면 스프링이 startUp 할때에
+      읽어들인다. 이 이름들은 튜닝이 가능하다.
+
+      나는 SpringBoot 를 따로 파지않고 dependencies 설정만 가져와서 부트를 적용시켜서인지
+      application.yml 파일이 없었다. resource 디렉토리 및에 application.yml 파일이 없다면
+      하나 만들어주자.
+
+    - https://docs.spring.io/spring-boot/docs/current/reference/html/application-
+      properties.html (참고자료)
+
+    - 부트의 기능 거의 대부분은 제어 가능
+    - 기본값이 세팅되어 있어서 심지어 아무 것도 쓰지 않아도 작동한다.
+    - 부트를 쓰는데 설정이 자꾸만 별도의 자바 코드로 등장한다? 하면 프로퍼티부터 보자
+
+        - debug
+          내가 찾고있는 설정이 잘 작동하지 않을때에 디버그 모드를 사용하여 찍힌 로그들을
+          찾아서 확인할 수 있다. 뭐가 많이 나온다.
+
+        - logback
+          기본적으로 logback 을 사용하려며 설정을 해줘야하나 기본적으로 제공해준다.
+
+        - 최대파일 크기, 히스토리 등...
+
+
+    - cache(캐시) 설정 가능
+    - JSON Properties 설정 가능
+    - Data Properties 설정 가능
+      (open-in-view) open session in view 세션 정보를 뷰까지 올라가서 보여주느냐 마느냐 하는
+      것인데 아직 말이 많다.
+    - Data Migration Properties
+
+        - 그 밖에....
+            - 웹 설정
+            - 템플릿 엔진 설정
+            - 서버 설정
+            - 시큐리티 설정
+            - Actuator 설정
+            - Devtools 설정
+            - Testing 설정
+
+    여러가지 설정들이 많으니 찾아서 사용해보자.
+    이정도가 있다는것만 기억하고 하나씩 필요할때에 떠올리며 사용하면 된다.
+
