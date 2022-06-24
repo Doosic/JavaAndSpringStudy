@@ -1,4 +1,6 @@
 spring:
+#  main:
+#    web-application-type: none
   h2:
     console:
       enabled: true
@@ -8,10 +10,11 @@ spring:
       hibernate:
         format_sql: true
         use_sql_commets: true
-  datasource:
-    driver-class-name: org.H2.Driver
-    username: userName
-    password: 1234
+# h2 데이터베이스도 config 파일없이 이곳에서 설정할 수 있다.
+#  datasource:
+#    driver-class-name: org.H2.Driver
+#    username: userName
+#    password: 1234
 
 logging.level:
   org.hibernate.SQL: debug
