@@ -47,13 +47,18 @@
         - @value
         - Environment
         - @ConfigurationProperties
+
               - 1. @value
                 - SpEL 로 프로퍼티명을 표현
-                -type-safe 하지 않음
-                -인스턴스화 이후에 주입하므로, final 쓸 수 없음
-                -생성자 안에서 보이지 않음 (대안: @PostConstruct)
+                - type-safe 하지 않음
+                - 인스턴스화 이후에 주입하므로, final 쓸 수 없음
+                  생성자 주입방식을 통하여 final 사용 가능
+                - 생성자 안에서 보이지 않음 (대안: @PostConstruct)
                 - Relaxed binding 지원 (kebab-case only)
                 - meta-data 없음 (javadoc 은 적용 가능)
+
+                import org.springframework.beans.factory.annotation.Value;
+                (lombok 의 value 가 아니므로 햇갈리지 말자.)
                 @Component
                 public class MyBean{
                     @Value("${name}")
@@ -68,7 +73,7 @@
                 @Autowired (생략가능 as of Spring Framework 4.3)
                 public SortService(
                     @Qualifier("bubbleSort") Sort<String> sort,
-                    Environment environment,
+                    Environment environment, // import org.springframework.core.env.Environment;
                     ApplicationContext app,
                     CustomProperties customProperties
                  ){
@@ -78,7 +83,10 @@
                     }
 
 
+
               - 3. Configuration Properties
+              build.gradle 에 추가
+              annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
                 - 자바 클래스로 매핑하므로 type-safe
                 - 각 프로퍼티에 대응하는 meta-data 작성 가능
                 - Relaxed binding 지원

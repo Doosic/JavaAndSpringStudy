@@ -20,3 +20,9 @@ logging.level:
   org.hibernate.SQL: debug
 
 #debug: true
+
+# 프로퍼티 설정
+api:
+  custom:
+    properties:
+      age: 27
