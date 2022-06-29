@@ -1,6 +1,7 @@
 package com.springBootStudy;
 
 import com.springBootStudy.properties.MyProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,30 +13,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
-
+@RequiredArgsConstructor
 @ConfigurationPropertiesScan
 @SpringBootApplication(
         exclude = {WebMvcAutoConfiguration.class}
 )
-public class SpringBootStudyApplication {
+public class SpringBootStudyApplication { // 강의 7분 까지 들었음
 
     //    @Value("${api.custom.properties.age}")
     private final Integer age;
     private final Environment environment;
     private final ApplicationContext applicationContext;
     private final MyProperties myProperties;
-
-    public SpringBootStudyApplication(
-            @Value("${api.custom.properties.age}") Integer age,
-            Environment environment,
-            ApplicationContext applicationContext,
-            MyProperties myProperties
-    ) {
-        this.age = age;
-        this.environment = environment;
-        this.applicationContext = applicationContext;
-        this.myProperties = myProperties;
-    }
 
 
     public static void main(String[] args) {
