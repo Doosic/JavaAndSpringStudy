@@ -18,9 +18,9 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication(
         exclude = {WebMvcAutoConfiguration.class}
 )
-public class SpringBootStudyApplication { // 강의 7분 까지 들었음
+public class SpringBootStudyApplication {
 
-    //    @Value("${api.custom.properties.age}")
+    @Value("${api.custom.properties.age}")
     private final Integer age;
     private final Environment environment;
     private final ApplicationContext applicationContext;

@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "api.custom.properties.age",
+      "type": "java.lang.Integer",
+      "defaultValue": 20
+    }
+  ],
+  "hints": [
+    {
+      "name": "api.custom.properties.age",
+      "values": [
+        {
+          "value": 20,
+          "description": "청춘."
+        },
+        {
+          "value": 30,
+          "description": "삼촌."
+        }
+      ]
+    }
+  ]
+}
