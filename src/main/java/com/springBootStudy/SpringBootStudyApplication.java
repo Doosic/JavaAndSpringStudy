@@ -20,10 +20,6 @@ import javax.annotation.PostConstruct;
 )
 public class SpringBootStudyApplication {
 
-    @Value("${api.custom.properties.age}")
-    private final Integer age;
-    private final Environment environment;
-    private final ApplicationContext applicationContext;
     private final MyProperties myProperties;
 
 
@@ -33,9 +29,6 @@ public class SpringBootStudyApplication {
 
     @PostConstruct
     public void init() {
-        System.out.println("[@Value] " + age);
-        System.out.println("[Environment] " + environment.getProperty("api.custom.properties.age"));
-        System.out.println("[ApplicationContext] " + applicationContext.getEnvironment().getProperty("api.custom.properties.age"));
         System.out.println("[configurationProps] " + myProperties.getAge());
     }
 

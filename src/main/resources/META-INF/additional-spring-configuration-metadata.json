@@ -2,8 +2,7 @@
   "properties": [
     {
       "name": "api.custom.properties.age",
-      "type": "java.lang.Integer",
-      "defaultValue": 20
+      "type": "java.lang.Integer"
     }
   ],
   "hints": [
@@ -12,11 +11,11 @@
       "values": [
         {
           "value": 20,
-          "description": "청춘."
+          "description": "20대."
         },
         {
           "value": 30,
-          "description": "삼촌."
+          "description": "30대."
         }
       ]
     }

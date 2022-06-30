@@ -25,4 +25,4 @@ logging.level:
 api:
   custom:
     properties:
-      age: 20
+      age: 30
