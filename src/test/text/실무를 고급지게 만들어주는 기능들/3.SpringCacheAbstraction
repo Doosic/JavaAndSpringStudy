@@ -1,0 +1,98 @@
+* Spring Cache Abstraction
+    - 애플리케이션에 "투명하게(transparently)" 캐시를 넣어주는 기능
+    - 메소드, 클래스에 적용 가능
+    - 캐시 인프라는 스프링 부트 자동 설정으로 세팅되고, 프로퍼티로 관리 가능
+    - implementation 'org.springframework.boot:spring-boot-cache' // boot-starter 에 기본 내장이라 추가를 안해줘도 캐시기능 사용가능
+    - implementation 'org.springframework.boot:spring-boot-starter-data-redis'// redis 를 사용가능하다.
+
+        - 캐시가 시스템, 애플리케이션에 투명하게 자리잡는다는 말은...?
+            1.데이터를 통신하는 시스템 쌍방이 캐시의 존재를 모른다는 의미
+            2."캐시가 있건 없건, 시스템의 기대 동작은 동일해야 한다."
+            3.캐시의 목표:오로지 "성능"
+            4.캐시의 개념과 목적에 부합하는 성질이자, 조건
+            $ 캐시는 오로지 성능을 위해서 자리를 잡고있는 것이기 때문에 다른것에 영향을 미쳐서는 안됨.
+              다른 데이터가 바뀌어 버린다면 또다른 비즈니스 로직이 되어버린다. 오로지 성능만을 위하기 때문에
+              다른것에 영향을 미치지 않는다는 의미로 "투명하다" 라는 말을 쓴다고 한다.
+
+        - 반복 잡업이라면 고려해 보세요
+            1.잘 바뀌지 않는 정보를 외부 저장소에서 반복적으로 읽어온다면
+            2.기대값이 어차피 같다면
+            3.캐싱해서 성능 향상, I/O 감소
+            $ 예를들어 사람의 나이정보를 캐싱할때에 년단위로 나이를 먹기에 1년 뒤에는
+              캐시를 새로 갱신해줘야 한다. 여기서 데이터를 분석한 결과에 따라서 캐시의
+              갱신 주기가 나오고 어떻게 관리할지 알게 된다.
+
+        - 사용 방법
+            1.스프링 부트의 시작점(@SpringBootApplication 이 달려있는 곳) 즉, MainApplicationClass 에 등록해준다.
+            2.@EnableCaching 어노테이션을 달아준다.(@Configuration Class 에 달아주면 된다)
+            3.캐시를 적용할 메서드에 @Cacheable("student") 어노테이션을 달아준다.
+            4.student 라는 이름은 일종의 키값이 된다. student::데이터 가 들어가는 형식이 된다고 한다.
+              Student(name=cassie, age=20, grade=A)
+
+            @EventListener(ApplicationReadyEvent.class)
+            public void init() {
+                studentService.printStudent("jack");
+                studentService.printStudent("jack");
+                studentService.printStudent("jack");
+                studentService.printStudent("fred");
+                studentService.printStudent("cassie");
+                studentService.printStudent("cassie");
+            }
+            결과값)
+                [repo] 나의 통행료는 무척 비싸다!
+                학생: Student(name=jack, age=15, grade=B)
+                학생: Student(name=jack, age=15, grade=B)
+                학생: Student(name=jack, age=15, grade=B)
+                [repo] 나의 통행료는 무척 비싸다!
+                학생: Student(name=fred, age=14, grade=B)
+                [repo] 나의 통행료는 무척 비싸다!
+                학생: Student(name=cassie, age=18, grade=B)
+                학생: Student(name=cassie, age=18, grade=B)
+            5.데이터를 요청할때마다 repo 가 찍혀야 하지만 cache 에 저장해두었다가
+              가져오기에 repo 가 찍히지 않는다.
+
+
+        - 캐시에서 생각해야 하는 것들
+            1.무엇을 캐시할까?
+            2.얼마나 오랫동안 캐시할까?
+              (어떤 데이터는 1년, 어떤 데이터는 한달, 어떤 데이터는 하루 또는 10초 등...)
+            3.언제 캐시를 갱신할까?
+              (1년동안 캐시한다면 언제 다시 갱신해야 할까..?)
+
+
+        - 주요 기능들 (Spring cache Document 를 참고)
+            1.@EnableCaching: 캐시를 활성화
+            2.@Cacheable: 캐시를 등록
+            3.@CacheEvict: 캐시를 삭제
+            4.@CachePut: 캐시를 실재로 직접 갱신
+
+
+        - 애플리케이션이 시작될때에 초기화 기능을 돕는 어노테이션들이 있다.
+          나중에 확인해보자 @EventListener(ApplicationReadyEvent.class)
+
+        - 캐시를 저장하는 것은 내부적으로 HashMap 을 이용하여 저장한다.
+
+
+    - redis
+        - redis 실행 명령어: https://redis.io/docs/about/
+            참고로 다운로드 후 intelliJ 터미널에서 하면 편하다.
+            1.sudo su (루트권한으로 들어간다)
+            2.service redis-server start (시작)
+            3.service redis-server stop (중지)
+            4.redis-cli ping (pong 반환으로 서비스 동작확인)
+
+         - 실무에서 많이 사용되는 캐시서버. 스프링 캐시와 연동하여 사용한다.
+         - build.gradle: implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+           build.gradle 에 추가시 아래처럼 추가해주지 않아도 알아서 다 설정이 된다.
+         - properties 또는 yml 파일에 spring.cache.type=redis 추가
+
+         - 초기셋팅을 하지 않아도 된다.
+           물론 redis.conf 파일에서 기본 port 라던지 설정들을 해줄 수 있다.
+
+         - domain(엔티티)에 implements Serializable 를 추가해줘야 된다.
+           다만 configuration 설정파일로 다른 직렬화 설정을 해준다면 이걸 빼면된다.
+
+         - TTL 캐시를 비워내는 방법중 하나. 캐시가 쌓이면 무거워진다.
+           참고로 잭슨 시리얼라이즈를 하면 프로퍼티에서는 설정 불가. 컨피그파일에서 하기
+
+         강의 18분까지 들었음

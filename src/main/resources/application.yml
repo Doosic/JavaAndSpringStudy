@@ -10,6 +10,9 @@ spring:
       hibernate:
         format_sql: true
         use_sql_commets: true
+#  cache:
+#    type: redis
+
 # h2 데이터베이스도 config 파일없이 이곳에서 설정할 수 있다.
 #  datasource:
 #    driver-class-name: org.H2.Driver
