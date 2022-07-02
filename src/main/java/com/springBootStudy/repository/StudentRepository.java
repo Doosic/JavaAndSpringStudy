@@ -14,6 +14,7 @@ public class StudentRepository {
 
     private final Map<String, StudentEntity> storage;
 
+    @Cacheable("student")
     public StudentEntity getStudent(String name){
         System.out.println("[repo] 나의 통행료는 무척 비싸다!");
         return storage.get(name);

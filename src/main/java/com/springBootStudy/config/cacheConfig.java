@@ -1,6 +1,5 @@
 package com.springBootStudy.config;
 
-import org.hibernate.cfg.SecondaryTableSecondPass;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,7 @@ public class cacheConfig {
     public RedisCacheConfiguration redisCacheConfiguration(){
         return RedisCacheConfiguration.defaultCacheConfig()
                 .computePrefixWith(name -> name + ":")
-                .entryTtl(Duration.ofSeconds(10))
+                .entryTtl(Duration.ofSeconds(15))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
 }

@@ -2,8 +2,7 @@ package com.springBootStudy;
 
 import lombok.*;
 
-import java.io.Serializable;
-
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 @Data
 public class StudentEntity{
