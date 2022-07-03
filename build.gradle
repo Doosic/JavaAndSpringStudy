@@ -5,7 +5,7 @@ plugins {
     id 'war'
 }
 
-group = 'org.springBootStudy'
+group = 'org.spring-boot-study'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 

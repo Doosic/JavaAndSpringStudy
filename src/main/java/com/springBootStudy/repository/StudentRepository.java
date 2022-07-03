@@ -1,7 +1,6 @@
 package com.springBootStudy.repository;
 
 import com.springBootStudy.StudentEntity;
-import com.springBootStudy.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;

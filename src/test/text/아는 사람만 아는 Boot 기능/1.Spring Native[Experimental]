@@ -1,0 +1,106 @@
+* Spring Native
+    * 주의점 앞으로 패키지 이름을 만들때에 springBootStudy 같은 형식으로 만들지 말자.
+      docker 이미지 빌드가 안된다.... spring-boot-study 와 같은 형식으로 만들어줘야한다.
+
+    Native?
+        1.GraalVM
+        2.AOT
+        3.High performance (고성능, 적은 메모리 사용)
+        4.Reduced memory consumption
+
+    - GraalVM
+        "Run Programs Faster Anywhere": 어디서든 더 빠르게!
+        1.Oracle Labs + 여러 협력사, 대학 연구실 협력 개발
+        2.2012년 처음 세상에 공개, 2019.5.9 첫GA
+        3.기존 C++로 만든 Hostpot JVM 의 개발 한계를 극복하기 위한 Meta-circular JVM
+        4.성능, 클라우드 환경(더 나은 성능,빠른스타트업 시간,적은 메모리), 다양성
+          오라클 jdk 한곳에서만 구할 수 있던것을, 다양한 회사에서 입맛에 맞게 바꾸어 jdk 를 출시할 수 있다. 여러곳에서 발전된 형태로 제공가능 이것이 다양성이다.
+        5.https://www.graalvm.org/
+            - 기존보다 메모리의 크기가 5배가량 줄고 속도가 빨라졌다.
+
+    - AOT
+        "미리 기계어로 번역한다"
+        1.vs.JIT(just-in-time)-기계어 번역 시점이 언제인가? (필요할 때 마다 기계어로 번역)
+            - JIT:중간 언어(바이트코드) -> 기계어 (runtime)
+            - AOT:중간 언어(바이트코드) -> 기계어 (compile time)
+        2.vs.Static Compiler-무엇을 기계어로 번역하는가?
+            - Static Compiler: 소스 코드 -> 기계어 (compile time)
+            - AOT:중간 언어(가상머신을 만들고 소스코드를 가상머신에서 이해할 수 있는 언어) -> 기계어(compile time) 이 행위를 빌드시에 하는것
+        기계어 번역이 끝나있으므로 속도가 더 빠름
+        런타임에서 컴파일러를 필요로 하지 않아 더 가벼움
+
+    - Native Image
+        1.AOT compiler 를 이용해 native image 빌드
+        2.정적 분석 과정을 포함
+        3.네이티브 바이너리 결과물은 즉시 실행 가능한 기계 코드 전체를 포함-JVM 불필요
+        4.다른 네이티브 이미지와 링크 가능
+        5.더 빠른 성능, 적은 메모리 소모
+        6.클라우드 네이티브 애플리케이션 배포에 효과적일 것으로 기대
+
+    - Spring Native 로 할 수 있는 일
+        - lightweight docker container containing a native executable (by default)
+          경량 도커 컨테이너를 만들어서 배포가 가능하다.
+        - a native executable (using maven plugin)
+          도커에 넣지않고 로컬에 바로 떨구는것도 가능하다.
+
+    - Spring Native 준비물
+        1.sdkman
+            - curl -s "https://get.sdkman.io" | bash
+            - source "~/.sdkman/bin/sdkman-init.sh"
+            - sdk help
+            다양한 밴더사의 Open JDK 를 관리해주는 툴 (GraalVM)
+        2.GraalVM
+            - sdk list java | grep GraalVM
+            - sdk install java 21.1.0.r${JAVA_VERSION}-grl (ex: java 21.1.0.r16-grl)
+        3. docker
+            - docker run hello-world
+            - rootless mode 로 되어야 함 (위 명령어가 sudo 없이 되어야 함) (macOS 는 되어 있음)
+
+    - Spring Native: 셋업 주의사항
+        - Spring Boot 2.5.2 부터 지원
+        - 이미지 빌드는 매우 오래 걸림
+        - macOS 에서 docker로 실행할 경우, 최소 8G의 넉넉한 램을 할당해줄 것
+        - docker 커맨드가 rootless 하게 실행되도록 준비할 것 (macOS는 해당 없음)
+        - 안 되는 기능이 있을 수 있으나 사전에 정확히 파악이 어려움
+        - Java 16 지원 안 하는 듯 (21.1.0.r16-grl 을 써도..)
+        - 한글 출력에 문제가 있는 듯
+
+    - Reference
+        - https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/
+
+
+
+    본격 설치 방법
+        1. sdkman(ubuntu20.04) => https://ubunlog.com/ko/sdkman-administra-kits-desarrollo/
+            - sudo apt install zip unzip curl
+            - curl -s "https://get.sdkman.io" | bash
+            - source "$HOME/.sdkman/bin/sdkman-init.sh"
+            - sdk version
+            - sdk install java 21.3.1.r8-grl (내가 사용하는 jdk 버전에 대응해야한다)
+            - 설치가 완료되면 default 버전을 선택할 수 있는데 그냥 지나쳤다면,,,?
+            - sdk default java 21.3.1.r8-grl 명령어로 디폴트버전 선택가능 ㅇㅇ
+
+        2. docker => https://zinirun.github.io/2020/08/15/how-to-use-docker/
+            1번 방법.
+            - curl -fsSL https://get.docker.com/ | sudo sh
+            - docker version (잘 설치됬는지 확인)
+            - service docker status (잘 실행되는지 확인)
+            - 실행되지 않을시 service docker start
+            - 일반 사용자에게 권한 부여 방법
+                1.root 계정으로 들어가 docker 을 실행한다.
+                2.sudo usermod -aG docker [username]
+                3.sudo service docker restart (도커를 재시작해줍니다.)
+                4.exit 유저 로그아웃한 뒤 다시 로그인
+            - docker run hello-world
+            - 내가쓸거
+                 service docker start
+                 sudo usermod -aG docker strou73
+                 service docker restart
+
+        3. docker 데스크탑 => https://docs.docker.com/desktop/windows/wsl/
+            -
+
+
+
+            'docker.io/library/spring-boot-study:1.0-SNAPSHOT'
+
