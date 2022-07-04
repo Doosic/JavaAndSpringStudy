@@ -114,6 +114,10 @@
            -p(포트) --rm(컨테이너 내릴시 삭제)
            docker run --rm -p 8080:8080 spring-boot-study:1.0-SNAPSHOT
 
+           만약 허브에 도커를 공유할시에는 이름을 다음과 같은 형식으로 맞추어 줘야한다.
+           docker image tag {이미지} {내 유저명}/{이미지}
+           docker image tag spring-boot-study:1.0-SNAPSHOT strou73/spring-boot-study:1.0-SNAPSHOT
+
            추가이슈)
             vault, redis 를 도커에서 사용하려면 추가로 포트를 오픈해줘야하는 이슈가 이싿.
 
