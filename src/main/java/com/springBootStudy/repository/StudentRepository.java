@@ -3,12 +3,17 @@ package com.springBootStudy.repository;
 import com.springBootStudy.StudentEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+//import org.springframework.nativex.hint.AotProxyHint;
+//import org.springframework.nativex.hint.ProxyBits;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
+//@AotProxyHint(targetClass = com.springBootStudy.repository.StudentRepository.class, proxyFeatures = ProxyBits.IS_STATIC)
 @RequiredArgsConstructor
 @Repository
+@Component
 public class StudentRepository {
 
     private final Map<String, StudentEntity> storage;
