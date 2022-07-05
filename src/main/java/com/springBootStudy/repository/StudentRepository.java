@@ -13,7 +13,7 @@ import java.util.Map;
 //@AotProxyHint(targetClass = com.springBootStudy.repository.StudentRepository.class, proxyFeatures = ProxyBits.IS_STATIC)
 @RequiredArgsConstructor
 @Repository
-@Component
+//@Component
 public class StudentRepository {
 
     private final Map<String, StudentEntity> storage;
