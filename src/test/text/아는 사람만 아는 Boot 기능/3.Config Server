@@ -9,7 +9,7 @@
         - 설정을 바꾸고 싶으면 DB 값을 update
         - 설정값이 몇 개 없는데 테이블 설계하긴 애매..?
 
-    * Spring cloud Config
+    * Spring cloud Config : https://cheese10yun.github.io/spring-config-server/
         1.설정을 바꾸고 싶으면 파일 내용만 바꾸면 끝
         2.git repository 지원
         3.분산 환경에서 다양한 스프링 부트 애플리케이션이 접근하기 용이
@@ -27,3 +27,13 @@
             - application: 스프링 부트 앱 이름 (spring.config.name) (default: application)
             - profile: 스프링 부트 프로파일 (ex: alpha, beta, real, test, ...)
             - label: git 브랜치명 (default: master)
+
+        순서) https://cheese10yun.github.io/spring-config-server/   , https://cloud.spring.io/spring-cloud-config/reference/html/
+            1.build.gradle
+                dependencyManagement{
+                    imports {mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"}
+                }
+            2.dependencies {implementation 'org.springframework.cloud:spring-cloud-config-server'}
+            3.ext{set('springCloudVersion', "2021.0.3")}
+            4.spring.cloud.config.server.git.uri=https://github.com/Doosic/springBootStudy (application.properties)
+            5.@EnableConfigServer(SpringBootApplication.java 에 추가)
