@@ -11,10 +11,10 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 public class MyProperties {
 
     /** 나이 값 */
-    private final Integer age;
+    private final Integer height;
 
-    public MyProperties(Integer age) {
-        this.age = age;
+    public MyProperties(Integer height) {
+        this.height = height;
     }
 
 }

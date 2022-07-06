@@ -24,10 +24,18 @@
     사용법
         1.테스트 할 클래스에 @Testcontainers 어노테이션을 붙여준다.
         2.도커이미지를 주입한다. 허브에가면 다양하게 제공하는 이미지들을 볼수있다. https://hub.docker.com/_/redis
+        static final String REDIS_IMAGE = "redis:latest";
         @Container
-        private static final GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse("redis:latest"));
+        private static final GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse(REDIS_IMAGE))
+                    .withExposedPorts(6379)
+                    .withReuse(true);
         3.@DynamicPropertySource
           redis 는 보통 6379 라는 포트가 고정이나 테스트시에는 랜덤이다. 그래서 나중에 주입해주는 방식으로
           사용한다.
-
+        @DynamicPropertySource
+        static void propertiesDynamic(DynamicPropertyRegistry registry){
+            // registry.add("spring.cache.type", () -> "redis");
+            registry.add("spring.redis.host", redisContainer::getHost);
+            registry.add("spring.redis.port", () -> redisContainer.getMappedPort(6379));
+        }
 

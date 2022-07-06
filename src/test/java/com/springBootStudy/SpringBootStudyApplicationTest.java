@@ -32,7 +32,7 @@ class SpringBootStudyApplicationTest {
         redis 를 찾을 수 없다.
 
         1.getHost: 컨테이너 호스트 "localhost를 반환한다"
-        2.getMappedPort(6379): 무작위로 매핑된 ㅍ ㅗ트는 컨테이너 시작 후 발생하므로 해당 메소드로 런타임 시 실제 포트를 검색할 수 있다.
+        2.getMappedPort(6379): 무작위로 매핑된 포트는 컨테이너 시작 후 발생하므로 해당 메소드로 런타임 시 실제 포트를 검색할 수 있다.
     */
     static final String REDIS_IMAGE = "redis:latest";
 
@@ -53,7 +53,7 @@ class SpringBootStudyApplicationTest {
 
     @DynamicPropertySource
     static void propertiesDynamic(DynamicPropertyRegistry registry){
-//        registry.add("spring.cache.type", () -> "redis");
+    //        registry.add("spring.cache.type", () -> "redis");
         registry.add("spring.redis.host", redisContainer::getHost);
         registry.add("spring.redis.port", () -> redisContainer.getMappedPort(6379));
     }
