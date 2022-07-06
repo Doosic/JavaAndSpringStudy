@@ -13,11 +13,11 @@ import java.time.Duration;
 @Configuration
 public class cacheConfig {
 
-//    @Bean
-//    public RedisCacheConfiguration redisCacheConfiguration(){
-//        return RedisCacheConfiguration.defaultCacheConfig()
-//                .computePrefixWith(name -> name + ":")
-//                .entryTtl(Duration.ofSeconds(15))
-//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-//    }
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration(){
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .computePrefixWith(name -> name + ":")
+                .entryTtl(Duration.ofSeconds(30))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
 }

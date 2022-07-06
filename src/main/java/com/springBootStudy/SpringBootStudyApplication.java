@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.event.EventListener;
 
 @ConfigurationPropertiesScan
 @SpringBootApplication
@@ -58,7 +57,12 @@ public class SpringBootStudyApplication {
     public ApplicationRunner applicationRunner() {
         return args -> {
             System.out.println("내 나이는: "+ myProperties.getAge());
-
+            studentService.printStudent("jack");
+            studentService.printStudent("jack");
+            studentService.printStudent("jack");
+            studentService.printStudent("cache");
+            studentService.printStudent("cache");
+            studentService.printStudent("fred");
             System.out.println("user: " + username);
             System.out.println("pw: " + password);
         };
