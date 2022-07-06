@@ -1,0 +1,7 @@
+* Spring Config Client
+    - Spring Config Server 로 부터 설정값을 읽어오려면
+        1. 간단!
+        2. spring-cloud-starter-config
+            - 테스트 중인 경우, spring-cloud-config-server 는 의존성에서 제거할 것
+        3. config server
+        4. 알맞은 application name (프로퍼티 파일명), label (git branch) 설정
