@@ -1,0 +1,26 @@
+* Spring Config Client
+    - Spring Config Server 로 부터 설정값을 읽어오려면
+        1. 간단!
+        2. spring-cloud-starter-config
+            - 테스트 중인 경우, spring-cloud-config-server 는 의존성에서 제거할 것
+        3. config server
+        4. 알맞은 application name (프로퍼티 파일명), label (git branch) 설정
+
+
+    - 시작
+        준비물: Config 서버로 돌려줄 웹서버를 준비해준다.(같은 프로젝트를 다른 디렉토리에 클론받아서 실행시켜주면된다.)
+        1. build.gradle 아래와 같이 설정 dependencies 에
+        //    implementation 'org.springframework.cloud:spring-cloud-config-server'
+               implementation 'org.springframework.cloud:spring-cloud-starter-config'
+        2. SpringBootApplication.java 에 가서 @EnableConfigServer // 를 지운다. (우리는 서버가 아닌 클라이언트 역할)
+        3. 우리가 클론한 웹서버를 띄웠음으로 8080포트를 사용중이다. 겹치지 않게 바꾸자(application.properties , application.yml)
+            server.port=8081
+            spring.application.name=config
+            spring.cloud.config.label=master
+* Spring Config Client
+    - Spring Config Server 로 부터 설정값을 읽어오려면
+        1. 간단!
+        2. spring-cloud-starter-config
+            - 테스트 중인 경우, spring-cloud-config-server 는 의존성에서 제거할 것
+        3. config server
+        4. 알맞은 application name (프로퍼티 파일명), label (git branch) 설정

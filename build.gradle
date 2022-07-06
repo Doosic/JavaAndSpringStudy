@@ -28,7 +28,8 @@ ext {
 }
 
 dependencies {
-    implementation 'org.springframework.cloud:spring-cloud-config-server'
+//    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -62,7 +63,7 @@ bootBuildImage {
     environment = ['BP_NATIVE_IMAGE': 'true']
 }
 
-bootRun {
-    String activeProfile = System.properties['spring.profiles.active']
-    systemProperty "spring.profiles.active", activeProfile
-}
+//bootRun {
+//    String activeProfile = System.properties['spring.profiles.active']
+//    systemProperty "spring.profiles.active", activeProfile
+//}
