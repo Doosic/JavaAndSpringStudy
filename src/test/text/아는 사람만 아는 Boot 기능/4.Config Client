@@ -17,10 +17,68 @@
             server.port=8081
             spring.application.name=config
             spring.cloud.config.label=master
+
 * Spring Config Client
     - Spring Config Server 로 부터 설정값을 읽어오려면
         1. 간단!
-        2. spring-cloud-starter-config
+        2. spring-cloud-starter-config 그래들에 추가해준다.  implementation 'org.springframework.cloud:spring-cloud-starter-config'
             - 테스트 중인 경우, spring-cloud-config-server 는 의존성에서 제거할 것
         3. config server
         4. 알맞은 application name (프로퍼티 파일명), label (git branch) 설정
+
+        5. 외부 설정값을 바로 적용시키는 방법
+            - @RefreshScope // 리프레쉬를 하게되면 다시 빈을 읽어서 등록하는 기능
+              을 서비스와 Properties 에 달아준다.
+            - localhost:8081/actuator 에 들어가서 refresh 가 있는지 확인한다.
+            - post 방식으로 이것을 호출하여준다.
+            - 호출방법 터미널을 열어준 후 다음과 같이 입력한다.
+            - curl -X POST http://localhost:8081/actuator/refresh
+            - 바뀐 내용이 적용된다면 ["config.client.version"...~~~~] 이 입력된다
+            - 바뀐 내용이 없다면 [] 이 나온다.
+            - 다만 @ConstructorBinding 이 붙어있는 상태에서는 사용이 불가능하다.
+            - @Setter 주입이 가능한 상태로 만들어줘야한다. 이때에는 @RefreshScope 가 없어도 바뀐다.
+
+        6. actuator 을 상당히 자주쓰는데 그럼 actuator 이 없으면 사용할 수 없는가?
+            - 컨트롤러에 다음코드들을 작성한다.
+            - private final ContextRefresher conRe;
+            @GetMapping("/refresh")
+             public Map<String, Set<String>> refresh(){
+             return Map.of("Done.", contextRefresher.refresh());
+             }
+
+             refresh 는 Set 을 사용한다.
+
+        정리)
+            /refresh 때문에 actuator 와 뗄 수 없는 관계인가?
+                - ContextRefresh 를 사용하여 분리가능
+            설정이 바뀔 때마다 모든 서비스들의 /refresh 를 호출하는 것은 불편하다.
+                - Spring Cloud Bus 를 이용
+
+            관련 레퍼런스 주소
+            https://cloud.spring.io/spring-cloud-config/refresh/html/
+            https://spring.io/guides/gs/centralized-configuration/
+
+
+
+        서버역할
+            application.properties 에 다음을 추가한다.
+            spring.cloud.config.server.git.uri=https://github.com/Doosic/springBootStudy
+            1. 깃 레포지토리 저장소의 주소를 추가해준다.
+            2. config 서버로서의 동작을 위해 @EnableConfigServer 어노테이션을 SpringBootApplication.java 에 붙여준다.
+            3. build.gradle => dependencies{implementation 'org.springframework.cloud:spring-cloud-config-server'} 를 넣어준다.
+
+        클라이언트 역할
+            spring.config.import=optional:vault://,\
+              optional:classpath:my[.properties],\
+              optional:/User/strou73/projectFile/spring-boot-study/src/spring-boot-study/src/main/resources/tree/,\
+              optional:configserver:http://localhost:8080/
+              1. 마지막줄을 보자 optional 을 주며 configserver 와 서버역할을 하는 서버의 ip 및 포트번호를 넣어준다.
+
+              2. 아래와 같이 서버역할과 포트가 곂치지 않게 지정해주고 레포지토리에 접근할 프로퍼티 파일명(config) 과
+                 브랜치의 이름(master) 을 넣어준다.
+              server.port=8081
+              spring.application.name=config
+              spring.cloud.config.label=master
+              3. build.gradle 에서는 client 역할을 하기 때문에
+              dependencies{implementation 'org.springframework.cloud:spring-cloud-starter-config'} 를 넣어준다
+              4. @EnableConfigServer 어노테이션을 SpringBootApplication.java 에서 빼준다.
