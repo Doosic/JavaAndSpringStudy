@@ -14,8 +14,15 @@
     3.스프링 부트를 실행시킨다.
     4.에러 페이지를 제거한다.
         server.error.whitelabel.enabled=false
-    5.BaseController 에 Error 페이지를 연결시켜준다, (/"error")
+    5.BaseController 에 Error 페이지를 연결시켜준다, @RequestMapping(/"error")
     6.error 메소드를 만들고 실행시 오류가 난다.
     7.ErrorController 에러페이지를 구현하겠다고 말해주는 Maker 인터페이스를 상속받야한다.
         @Controller
         public class BaseController implements ErrorController {};
+
+    8. @RequestMapping("/admin") 컨트롤러 위에다 주소를 넣어줄수 있다.
+       예를들어 @RequestMapping("/admin") 해주면 그 아래 메서드들을 @GetMapping("/places") 하면
+       다음과같이 만들어진다. /admin/places
+
+    9.@PathVariable 패스(주소)안의 일부 요소를 변수로 보겠다 라고 하는것이다.
+      webMvcAutoConfiguration 에 의해 타입을 붙여주면 해당 타입으로 자동으로 컨버팅 해준다.
