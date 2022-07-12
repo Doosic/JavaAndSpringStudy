@@ -1,0 +1,21 @@
+* 어노테이션 기반 설계
+    - build.gradle 설정
+        dependencies {
+              implementation 'org.springframework.boot:spring-boot-starter-actuator'
+              implementation 'org.springframework.boot:spring-boot-starter-web'
+              implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+              compileOnly 'org.projectlombok:lombok'
+              annotationProcessor 'org.projectlombok:lombok'
+              testImplementation 'org.springframework.boot:spring-boot-starter-test'
+          }
+
+    1.Controller 디렉토리를 만든후 Controller.class 를 만들어준다.
+    2.thymeleaf 를 build.gradle 에 추가해준다.
+    3.스프링 부트를 실행시킨다.
+    4.에러 페이지를 제거한다.
+        server.error.whitelabel.enabled=false
+    5.BaseController 에 Error 페이지를 연결시켜준다, (/"error")
+    6.error 메소드를 만들고 실행시 오류가 난다.
+    7.ErrorController 에러페이지를 구현하겠다고 말해주는 Maker 인터페이스를 상속받야한다.
+        @Controller
+        public class BaseController implements ErrorController {};
