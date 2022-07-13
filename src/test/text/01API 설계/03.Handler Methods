@@ -1,0 +1,65 @@
+* Handler Methods
+    - 핸들러 메소드란
+        Spring Web 에서 사용자의 요청(request)을 받아 응답(response)을 리턴하는 메소드
+        1.매핑 정보
+        2.요청
+        3.응답
+
+         @GetMapping("/places/{placeId}")                            => 매핑정보
+            public String getPlaces(@PathVariable Integer placeId) { => 요청
+                return "place" + placeId;                            => 응답
+            }
+
+
+        1.매핑정보
+            @RequestMapping
+                1.name: 뷰템플릿에서 식별할 때 쓰는 이름
+                2.value,path: URI
+                3.method: HTTP method (ex: GET, POST, ...)
+                4.params: 파라미터 검사
+                5.headers: 헤더 검사
+                6.consumes: 헤더의 Content-Type 검사
+                7.produces: 헤더의 Accept 검사
+
+                @RequestMapping(
+                    name = "IAmGetPlaces",                      => 뷰 템플릿에서 호출할 수 있는 이름
+                    value = "/places",                          => uri 경로
+                    path = "/places",                           => uri 경로
+                    method = RequestMethod.GET,                 => HTTP method: GET
+                    params = "test=true",                       => test=true 파라미터 있는 요청만
+                    headers = "header-auth=stupidPassword",     => header-auth 헤더값 있는 요청만
+                    consumes = MediaType.APPLICATION_JSON_VALUE,=> json 으로 데이터 주는 요청만.
+                    produces = MediaType.APPLICATION_JSON_VALUE => json 으로 데이터를 받을 수 있어?
+                )
+
+            @RequestMapping shortcuts (각 메소드에 맞게 사용하면된다)
+                1.@GetMapping
+                2.@PostMapping
+                3.@PutMapping
+                4.@DeleteMapping
+                5.PatchMapping
+
+
+        2.요청
+            핸들러 메소드가 받을 수 있는 요청들
+                메소드 파라미터로 적어 넣을 수 있는 타입들
+                1.ServletRequest, ServletResponse, HttpSession
+                2.WebRequest, NativeWebRequest
+                3.@RequestParam, @PathVariable
+                4.@RequestBody, HttpEntity<B>
+                5.@ModelAttribute, @SessionAttribute, Model, ModelMap
+                6.@RequestHeader, @CookieValue
+                7. ....................... 너무 많다 자주 사용하는 것들만 기억하고 쓰면된다.
+
+
+        3.응답
+            핸들러 메소드가 내보낼 수 있는 응답들
+                메소드가 리턴할 수 있는 타입들
+                1.ModelAndView
+                2.String, View
+                3.@ModelAttribute, Map, Model
+                4.@ResponseBody
+                5.HttpEntity<B>, ResponseEntity<B>
+                6.HttpHeaders
+                7.void
+                8. ................................
