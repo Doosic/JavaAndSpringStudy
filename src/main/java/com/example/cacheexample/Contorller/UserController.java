@@ -40,4 +40,12 @@ public class UserController {
         log.info(user.getName() + " Cache 수행시간 : " + (end-start));
         return user;
     }
+
+    // key 값을 이용하여 캐시삭제
+    @GetMapping("/user/refresh/{id}")
+    public void refreshCache(
+            @PathVariable Long id
+    ){
+        userService.refresh(id);
+    }
 }

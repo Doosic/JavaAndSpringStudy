@@ -17,13 +17,16 @@ public class UserService {
 
     public User printUser(Long id){
         User user = userRepository.findByIdCache(id);
-        log.info("찾는 사람: "+user);
         return user;
     }
 
     public User printUserNoCache(Long id){
         User user = userRepository.findByIdNoCache(id);
         return user;
+    }
+
+    public void refresh(Long id){
+        userRepository.refresh(id);
     }
 
     // userRepositoryImpl 의 enroll 메서드를 호출하여 유저정보를 초기화해준다.
