@@ -6,4 +6,5 @@ public interface UserRepository {
 
     User findByIdCache(Long id);
     User findByIdNoCache(Long id);
+    void refresh(Long id);
 }

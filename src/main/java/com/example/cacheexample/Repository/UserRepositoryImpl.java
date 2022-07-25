@@ -4,6 +4,7 @@ import com.example.cacheexample.Entity.User;
 import com.example.cacheexample.RepositoryImpl.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +30,13 @@ public class UserRepositoryImpl implements UserRepository {
         slowQuery(3000);
         return storage.get(id);
     }
+
+    @Override
+    @CacheEvict(value = "User", key = "#id")
+    public void refresh(Long id){
+        log.info("Cache Clear: " + id);
+    }
+
 
     // storage 에 유저정보를 넣어준다.
     public User enroll(Long id, String name, String email, Integer age){
