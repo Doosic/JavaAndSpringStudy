@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@EnableCaching // 어노테이션을 이용하여 해당 클래스에서 캐시기능을 사용하겠다는 선언
+//@EnableCaching
 @RequiredArgsConstructor
 @RestController
 public class UserController {

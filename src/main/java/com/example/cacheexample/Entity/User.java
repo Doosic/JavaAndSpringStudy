@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @AllArgsConstructor(staticName = "of")
-public class User {
+@NoArgsConstructor
+public class User{
 
     private Long id;
 
