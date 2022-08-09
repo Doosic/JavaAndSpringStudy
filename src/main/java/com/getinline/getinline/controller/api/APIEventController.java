@@ -5,6 +5,7 @@ import com.getinline.getinline.dto.APIErrorResponse;
 import com.getinline.getinline.exception.GeneralException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class APIEventController {
 
     @GetMapping("/events")
-    public List<String> getEnvets() {
+    public List<String> getEnvets() throws Exception{
         return List.of("event1", "event2");
     }
 
