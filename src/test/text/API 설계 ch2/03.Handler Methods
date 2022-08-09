@@ -37,7 +37,7 @@
                 2.@PostMapping
                 3.@PutMapping
                 4.@DeleteMapping
-                5.PatchMapping
+                5.@PatchMapping
 
 
         2.요청
