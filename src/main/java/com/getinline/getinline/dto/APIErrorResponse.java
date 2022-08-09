@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED) // 상속받은 클래스만 사용 가능하게 PROTECTED 를 사용
 public class APIErrorResponse {
 
     private final Boolean success;

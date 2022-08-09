@@ -9,12 +9,14 @@ import java.util.function.Predicate;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-
+    // 정상적인 케이스
     OK(0, ErrorCategory.NORMAL, "Ok"),
 
+    // 클라이언트에게 문제가 있었을 경우
     BAD_REQUEST(10000, ErrorCategory.CLIENT_SIDE, "bad request"),
     SPRING_BAD_REQUEST(10001, ErrorCategory.CLIENT_SIDE, "Spring-detected bad request"),
 
+    // 서버에 문제가 있었을 경우
     INTERNAL_ERROR(20000, ErrorCategory.SERVER_SIDE, "internal error"),
     SPRING_INTERNAL_ERROR(20001, ErrorCategory.SERVER_SIDE, "Spring-detected internal error")
     ;
@@ -42,6 +44,7 @@ public enum ErrorCode {
         return this.getErrorCategory() == ErrorCategory.SERVER_SIDE;
     }
 
+    // lombok 을 사용하지 않은 이유는 간단하게만 보여주기 위해서 ToString 을 직접 구현함
     @Override
     public String toString(){
         return String.format("%s (%d)", name(), this.getCode());
