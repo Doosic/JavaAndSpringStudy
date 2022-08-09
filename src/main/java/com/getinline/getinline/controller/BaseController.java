@@ -10,7 +10,7 @@ public class BaseController{
 
     @GetMapping("/")
     public String root() throws Exception{
-        throw new Exception("테스트");
-//        return "index";
+//        throw new Exception("테스트");
+        return "index";
     }
 }

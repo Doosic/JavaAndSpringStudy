@@ -1,0 +1,61 @@
+* ControllerAdvice(3)
+
+    요청에 따라서 Error 를 WebPage 로 띄워줄지 Json 형식으로 응답해줄지 결정하는 컨트롤러이다.
+    Header 의 Accept 에  TEXT_HTML_VALUE 가 들어온다면 WebPage 로 아니라면 Json 형식으로 응답해준다.
+
+    @Controller
+    public class BaseErrorController implements ErrorController {
+
+        // Header에 TEXT_HTML_VALUE 를 가지고 있는것만 HTML 페이지로 이동 외에는 json 응답
+        @GetMapping(path = "/error", produces = MediaType.TEXT_HTML_VALUE)
+        public ModelAndView errorHtml(HttpServletResponse response){
+            HttpStatus status = HttpStatus.valueOf(response.getStatus());
+            // 400번대 Error 라면 BAD_REQUEST 를 아니라면 INTERNAL_ERROR 를 던져준다.
+            ErrorCode errorCode = status.is4xxClientError() ? ErrorCode.BAD_REQUEST : ErrorCode.INTERNAL_ERROR;
+
+            return new ModelAndView("error", Map.of(
+                    "statusCode", status.value(),
+                    "errorCode", errorCode,
+                    "message", errorCode.getMessage(status.getReasonPhrase())
+                    ),
+                    status
+            );
+        }
+
+        @GetMapping("/error")
+        public ResponseEntity<APIErrorResponse> error(HttpServletResponse response){
+            HttpStatus status = HttpStatus.valueOf(response.getStatus());
+            // 400번대 Error 라면 BAD_REQUEST 를 아니라면 INTERNAL_ERROR 를 던져준다.
+            ErrorCode errorCode = status.is4xxClientError() ? ErrorCode.BAD_REQUEST : ErrorCode.INTERNAL_ERROR;
+
+            return ResponseEntity
+                    .status(status)
+                    .body(APIErrorResponse.of(false, errorCode));
+        }
+
+    }
+
+
+    - 아래와 같이 특정 컨트롤러에다가 @ExceptionHandler 를 정의할시에는
+      모든 컨트롤러의 에러를 잡는것이 아닌 해당 컨트롤러의 에러만을 잡아준다.
+
+        @RequestMapping("/api")
+        @RestController
+        public class APIEventController {
+            /*
+                현재 컨트롤러에서 Exception 발생시 잡아준다. 범위를 현재 클래스로 한정
+            */
+            @ExceptionHandler
+            public ResponseEntity<APIErrorResponse> general(GeneralException e){
+                ErrorCode errorCode = e.getErrorCode();
+                HttpStatus status = errorCode.isClientSideError() ?
+                        HttpStatus.BAD_REQUEST :
+                        HttpStatus.INTERNAL_SERVER_ERROR;
+
+                return ResponseEntity
+                        .status(status)
+                        .body(APIErrorResponse.of(
+                                 false, errorCode, errorCode.getMessage(e)
+                        ));
+            }
+        }
