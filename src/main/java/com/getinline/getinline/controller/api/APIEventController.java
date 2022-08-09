@@ -1,5 +1,11 @@
 package com.getinline.getinline.controller.api;
 
+import com.getinline.getinline.constant.ErrorCode;
+import com.getinline.getinline.dto.APIErrorResponse;
+import com.getinline.getinline.exception.GeneralException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,7 +15,7 @@ import java.util.List;
 public class APIEventController {
 
     @GetMapping("/events")
-    public List<String> getEnvets() {
+    public List<String> getEnvets() throws Exception{
         return List.of("event1", "event2");
     }
 
@@ -32,4 +38,21 @@ public class APIEventController {
     public Boolean removeEvent(@PathVariable Integer eventId) {
         return true;
     }
+
+    /*
+        현재 컨트롤러에서 Exception 발생시 잡아준다. 범위를 현재 클래스로 한정
+    */
+//    @ExceptionHandler
+//    public ResponseEntity<APIErrorResponse> general(GeneralException e){
+//        ErrorCode errorCode = e.getErrorCode();
+//        HttpStatus status = errorCode.isClientSideError() ?
+//                HttpStatus.BAD_REQUEST :
+//                HttpStatus.INTERNAL_SERVER_ERROR;
+//
+//        return ResponseEntity
+//                .status(status)
+//                .body(APIErrorResponse.of(
+//                         false, errorCode, errorCode.getMessage(e)
+//                ));
+//    }
 }
