@@ -1,11 +1,13 @@
 package com.getinline.getinline.domain;
 
 import com.getinline.getinline.constant.PlaceType;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class Place {
     private Long id;
 
