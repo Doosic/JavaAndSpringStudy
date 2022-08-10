@@ -1,0 +1,25 @@
+* 컨트롤러 테스트 (2)
+
+    - Junit5 부터 @Autowired 가 아닌 생성자 주입방법 사용가능
+        1.@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL) 클래스에 선언
+        2.private final MockMvc mvc; 파이널로 선언해줘야한다.
+        3.
+            BaseControllerTest(MockMvc mvc) {
+                    this.mvc = mvc;
+                }
+
+        그러나 생성자 주입방법을 사용하면 모든 주도권을 스프링이 가져가기 때문에
+        @Autowired 를 달아주는 방법이 좋다.
+        BaseControllerTest(@Autowired MockMvc mvc) {
+                this.mvc = mvc;
+            }
+
+
+
+    - @WebMvcTest
+        컨트롤러 레이어만을 간략하게 테스트해볼때 사용한다.
+        다음과 같이 특정 컨트롤러만 지정하여 사용도 가능하다.
+        @WebMvcTest(BaseControllerTest.class)
+
+
+    - jsonPath() json 타입을 검사할때 사용

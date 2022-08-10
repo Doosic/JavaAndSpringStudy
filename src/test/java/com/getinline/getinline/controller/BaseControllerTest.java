@@ -4,30 +4,36 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc
-@SpringBootTest
+@WebMvcTest(BaseControllerTest.class)
 class BaseControllerTest {
 
     /*
         @AutoConfigureMockMvc
         사용시 Mock 을 @Autowired 로 주입 가능하다.
+
+        그러나 Junit 5 부터는 생성자 주입이 가능하다.
+        @SpringBootTest 에 @ExtendWith(SpringExtension.class) 이 붙어있기에 가능
     */
-    @Autowired
-    private MockMvc mvc;
+    private final MockMvc mvc;
+
+    public BaseControllerTest(@Autowired MockMvc mvc) {
+        this.mvc = mvc;
+    }
 
     @DisplayName("[view] [GET] 기본 페이지 요청")
     @Test
-    void root() throws Exception {
+    void givenNothing_whenRequestingRootPage_thenReturnsIndexPage() throws Exception {
         // Given
 
         // When & Then
