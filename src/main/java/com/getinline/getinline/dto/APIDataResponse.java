@@ -15,13 +15,23 @@ public class APIDataResponse<T> extends APIErrorResponse{
 
     private final T data;
 
+    /*
+        표준 응답은 성공을 기준으로한다.
+        실패했다면 APIErrorResponse 를 보내줬을것이다.
+        그렇기에 data 만 셋팅하면 되는 문제이다.
+    */
     protected APIDataResponse(T data) {
         super(true, ErrorCode.OK.getCode(), ErrorCode.OK.getMessage());
         this.data = data;
     }
 
+    // 생성자를 리턴해준다.
     public static <T> APIDataResponse<T> of(T data){
         return new APIDataResponse<>(data);
+    }
+
+    public static <T> APIDataResponse<T> empty(){
+        return new APIDataResponse<>(null);
     }
 
 
