@@ -5,6 +5,8 @@ import com.getinline.getinline.constant.PlaceType;
 import com.getinline.getinline.domain.Place;
 import com.getinline.getinline.dto.APIDataResponse;
 import com.getinline.getinline.dto.PlaceDTO;
+import com.getinline.getinline.dto.PlaceResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 public class APIPlaceController {
 
     @GetMapping("/places")
-    public APIDataResponse<List<PlaceDTO>> getPlaces() {
+    public APIDataResponse<List<PlaceResponse>> getPlaces() {
         Place place = Place.builder()
                 .placeType(PlaceType.COMMON)
                 .placeName("야미배드민턴장")
@@ -23,16 +25,17 @@ public class APIPlaceController {
                 .capacity(String.valueOf(30))
                 .memo("신장개업")
                 .build();
-        return APIDataResponse.of(List.of(PlaceDTO.of(place)));
+        return APIDataResponse.of(List.of(PlaceResponse.of(place)));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/places")
     public Boolean createPlaces() {
         return true;
     }
 
     @GetMapping("/places/{placeId}")
-    public APIDataResponse<PlaceDTO> getPlaces(
+    public APIDataResponse<PlaceResponse> getPlaces(
             @PathVariable Integer placeId
     ) {
         if(placeId.equals(2)){
@@ -47,7 +50,7 @@ public class APIPlaceController {
                 .capacity(String.valueOf(30))
                 .memo("신장개업")
                 .build();
-        return APIDataResponse.of(PlaceDTO.of(place));
+        return APIDataResponse.of(PlaceResponse.of(place));
     }
 
     @PutMapping("/places/{placeId}")
