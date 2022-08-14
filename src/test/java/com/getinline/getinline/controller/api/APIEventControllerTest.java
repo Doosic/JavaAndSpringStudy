@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +40,9 @@ class APIEventControllerTest {
 
     private final MockMvc mvc;
     private final ObjectMapper mapper;
-
+    
+    // @MockBean 은 더티컨텍스트라는 문제가 있다. 회피하는 방법은 현제 없으며
+    // 테스트가 변경될때마다 컨테이너가 다시 올라온다. 그래서 느려지는 문제가 있다.
     @MockBean
     private EventService eventService;
 
@@ -50,7 +54,7 @@ class APIEventControllerTest {
         this.mapper = mapper;
     }
 
-    @DisplayName("[API] [GET] 이벤트 리스트 조회")
+    @DisplayName("[API] [GET] 이벤트 리스트 조회 + 검색 파라미터")
     @Test
     void givenNothing_whenRequestingPlaces_thenReturnsListOfPlacesInStandardResponse() throws Exception{
         // Given
@@ -87,6 +91,28 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
         then(eventService).should().getEvents(any(), any(), any(), any(), any());
+    }
+
+    @DisplayName("[API] [GET] 이벤트 리스트 조회 + 잘못된 검색 파라미터")
+    @Test
+    void givenNothing_whenRequestingPlaces_thenReturnsFailListStandardResponse() throws Exception{
+        // Given
+
+        // When & Then
+        mvc.perform(
+                        get("/api/events")
+                                .queryParam("placeId","0")
+                                .queryParam("eventName","오")
+                                .queryParam("eventStatus", EventStatus.OPENED.name())
+                                .queryParam("eventStartDateTime","2021-01-01T00:00:00")
+                                .queryParam("eventEndDateTime","2021-01-02T00:00:00")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
+        then(eventService).shouldHaveNoInteractions();
     }
 
     private EventDTO createEventDTO(
