@@ -1,6 +1,7 @@
 package com.getinline.getinline.controller.api;
 
 import com.getinline.getinline.constant.ErrorCode;
+import com.getinline.getinline.constant.EventStatus;
 import com.getinline.getinline.constant.PlaceType;
 import com.getinline.getinline.domain.Place;
 import org.junit.jupiter.api.DisplayName;
