@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,16 +18,45 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventRequest {
 
+    @NotNull
+    @Positive
     private Long placeId;
+
+    @NotBlank
     private String eventName;
+
+    @NotNull
     private EventStatus eventStatus;
+
+    @NotNull
     private LocalDateTime eventStartDatetime;
+
+    @NotNull
     private LocalDateTime eventEndDatetime;
+
+    @NotNull
+    @PositiveOrZero
     private Integer currentNumberOfPeople;
+
+    @NotNull
+    @Positive
     private Integer capacity;
+
     private String memo;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+
+
+    public static EventRequest of(EventDTO event){
+        return EventRequest.builder()
+                .placeId(event.getPlaceId())
+                .eventName(event.getEventName())
+                .eventStatus(event.getEventStatus())
+                .eventStartDatetime(event.getEventStartDatetime())
+                .eventEndDatetime(event.getEventEndDatetime())
+                .currentNumberOfPeople(event.getCurrentNumberOfPeople())
+                .capacity(event.getCapacity())
+                .memo(event.getMemo())
+                .build();
+    }
 
     public EventDTO toDTO(){
         return EventDTO.builder()
@@ -35,8 +68,6 @@ public class EventRequest {
                 .currentNumberOfPeople(this.currentNumberOfPeople)
                 .capacity(this.capacity)
                 .memo(this.memo)
-                .createdAt(this.createdAt)
-                .modifiedAt(this.modifiedAt)
                 .build();
     }
 

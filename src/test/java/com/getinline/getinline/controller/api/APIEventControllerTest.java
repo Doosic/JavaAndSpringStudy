@@ -5,6 +5,7 @@ import com.getinline.getinline.constant.ErrorCode;
 import com.getinline.getinline.constant.EventStatus;
 import com.getinline.getinline.constant.PlaceType;
 import com.getinline.getinline.dto.EventDTO;
+import com.getinline.getinline.dto.EventResponse;
 import com.getinline.getinline.service.EventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -114,7 +116,40 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
         then(eventService).shouldHaveNoInteractions();
     }
+    
+    @DisplayName("[API] [POST] 이벤트 생성 - 잘못된 데이터 입력")
+    @Test
+    void givenWrongEvent_whenCreatingAnEvent_thenReturnsFailedStandardResponse() throws Exception{
+        // Given
+        EventResponse eventResponse = EventResponse.of(
+                EventDTO.builder()
+                        .placeId(-1L)
+                        .eventName("   ")
+                        .eventStatus(null)
+                        .eventStartDatetime(null)
+                        .eventEndDatetime(null)
+                        .currentNumberOfPeople(-1)
+                        .capacity(0)
+                        .memo("마스크 꼭 착용하세요")
+                        .build()
+        );
 
+        
+        // When & Then
+        mvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(eventResponse))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
+        then(eventService).shouldHaveNoInteractions();
+        
+    }
+    
     private EventDTO createEventDTO(
     ){
         return EventDTO.builder()
