@@ -9,6 +9,7 @@ import com.getinline.getinline.dto.EventResponse;
 import com.getinline.getinline.exception.GeneralException;
 import com.getinline.getinline.service.EventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
