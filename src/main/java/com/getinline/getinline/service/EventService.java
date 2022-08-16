@@ -28,11 +28,15 @@ public class EventService {
     ){
         try {
             return eventRepository.findEvents(
-                    placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime
+                    placeId,
+                    eventName,
+                    eventStatus,
+                    eventStartDateTime,
+                    eventEndDateTime
             );
         }
         catch (Exception e){
-            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR);
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 

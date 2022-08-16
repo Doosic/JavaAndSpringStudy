@@ -25,7 +25,8 @@ public class EventServiceSociableTest {
         // When
         List<EventDTO> list = sut.getEvents(null,null,null,null,null);
 
+        System.out.println(list);
         // Then
-        assertThat(list).hasSize(0);
+        assertThat(list).hasSize(1);
     }
 }
