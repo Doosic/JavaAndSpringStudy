@@ -1,0 +1,142 @@
+* spring boot properties
+
+    평소 실무에서 자주 등장하거나 유용한 프로퍼티를 알아보자!
+
+    - logging
+        - debug
+        - trace
+        - logging.level.원하는.패키지.이름
+            - ex: logging.level.com.doosic.getinline=debug
+
+            1.logging.logback.rollingpolicy.clean-history-on-start
+            2.logging.logback.rollingpolicy.file-name-pattern
+            3.logging.logback.rollingpolicy.max-file-size
+            4.logging.logback.rollingpolicy.max-history
+            5.logging.logback.rollingpolicy.total-size-cap
+
+            그냥 debug = true 를 사용하면 너무 많은 디버그가 찍힌다.
+            다음을 적용해서 보고싶은 패키지에 대한 로그만 확인해보자.
+            application.properties 또는 yml => logging.level.com.getinline.getinline=debug
+            이후 컨트롤러 또는 서비스에가서 @Slf4j 어노테이션을 달아준 후에
+            log.debug("보고 싶은 값: {}", eventRequest)
+
+            다음 우리는 debug=false 로 두고 api 호출시 다음과같은 내용을 보고싶다. 어떻게할까?
+            o.s.web.servlet.DispatcherServlet   : POST "/api/events", parameters={}
+            다음 o.s 는 약어이다. 생략된 내용이고 콘솔에 표출될 길이가 길어질수록 약어로 변한다.
+            ex) o.s.w.s.DispatcherServlet
+                앞의 약어는 다음과 같다. org.springframework.web.servlet.DispatcherServlet
+                logging : logging.level.org.springframework.web.servlet=debug
+
+
+        - 다음 우리는 실무에서 로그를 text 파일 하나에 다 쌓다보면 그 크기가 무한정으로 커지게되고
+          결국 로그를 쉽게 확인하기 어려운 사이즈까지 커질것이다. mongoDB 로그를 그렇게 쌓다가
+          4GB, 5GB.... 까지 늘어나 실무프로젝트 도중 mongoDB 가 내려간 일이 있었다.
+
+          이때에 logging.logback.rollingpolicy. ~~~ 를 활용하여 일정 기간마다 text 파일을
+          변경하게 할 수 있다.
+
+
+
+
+    - banner
+        팀단위로 활동하다보면 banner 를 바꾸고싶을때가 있다.
+        그런때에 한번씩 활용해보자 => 콘솔에 나오는 배너
+        spring boot banner generator 활용하기.
+        참고 사이트 : https://devops.datenkollektiv.de/banner.txt/index.html
+
+        방법 : resources 파일 밑에 banner.txt 에 배너그림 넣어주기
+
+        - spring.banner.charset
+        - spring.banner.image.bitdepth
+        - spring.banner.image.height
+        - spring.banner.image.invert
+        - spring.banner.image.location
+        - spring.banner.image.margin
+        - spring.banner.image.pixelmode
+        - spring.banner.image.width
+        - spring.banner.location
+
+
+
+    - config
+        이건 중요한 설정이다 잘 기억해두자!!!
+
+        - spring.config.activate.on-profile
+            - spring.profiles 가 deprecated 되었으니 주의
+        - spring.config.import
+        - spring.config.use-legacy-processing
+
+        각 환경마다 프로퍼티 환경을 다르게 사용하고싶다 dev, local, alpha 등...
+        개발환경을 다르게 설정하여 사용해보자
+
+
+
+    - ant_path_matcher
+        - 스프링부트 2.6 으로 업그레이드 시 요청 경로를 ControllerHandler에 매칭시키기 위한 전략의 기본 값
+          즉, spring.mvc.pathmatch.matching-strategy 기본 값이 ant_path_matcher 에서 path_pattern_parser 로 변경된다.
+        - application.properties 에서 ant_path_matcher 값을 default 값으로 변경
+        - Spring boot 버전을 2.5.x 로 낮춘다.
+
+            사용방법 : spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+
+
+
+    - main
+        - 배너를 비활성화 하는법
+            spring.main.banner-mode=off
+
+
+
+    - json
+        왠만한 json 설정은 여기서 다 할수있으니까 여기서 먼저 찾아보자
+
+        spring.jackson.date-format : Date format string or a fully-qualified date format class name. For instance, `yyyy-MM-dd HH:mm:ss`.
+        spring.jackson.default-property-inclusion : Controls the inclusion of properties during serialization. Configured with one of the values in Jackson's
+        JsonInclude.Include enumeration.
+        spring.jackson.deserialization.* : Jackson on/off features that affect the way Java objects are deserialized.
+        spring.jackson.generator.* : Jackson on/off features for generators.
+        spring.jackson.locale : Locale used for formatting.
+        spring.jackson.mapper.* : Jackson general purpose on/off features.
+        spring.jackson.parser.* : Jackson on/off features for parsers.
+        spring.jackson.property-naming-strategy : One of the constants on Jackson's PropertyNamingStrategies. Can also be a fully-qualified class name
+        of a PropertyNamingStrategy implementation.
+        spring.jackson.serialization.* : Jackson on/off features that affect the way Java objects are serialized.
+        spring.jackson.time-zone : Time zone used when formatting dates. For instance, "America/Los_Angeles" or "GMT+10".
+
+        spring.gson.date-format : Format to use when serializing Date objects.
+        spring.gson.disable-html-escaping : Whether to disable the escaping of HTML characters such as '<', '>', etc.
+        spring.gson.disable-inner-class-serialization : Whether to exclude inner classes during serialization.
+        spring.gson.enable-complex-map-key-serialization : Whether to enable serialization of complex map keys (i.e. non-primitives).
+        spring.gson.exclude-fields-without-expose-annotation : Whether to exclude all fields from consideration for serialization or deserialization that do not have the
+        "Expose" annotation.
+        spring.gson.field-naming-policy : Naming policy that should be applied to an object's field during serialization and deserialization.
+        spring.gson.generate-non-executable-json : Whether to generate non executable JSON by prefixing the output with some special text.
+        spring.gson.lenient : Whether to be lenient about parsing JSON that doesn't conform to RFC 4627.
+        spring.gson.long-serialization-policy : Serialization policy for Long and long types.
+        spring.gson.pretty-printing : Whether to output serialized JSON that fits in a page for pretty printing.
+        spring.gson.serialize-nulls : Whether to serialize null fields
+
+
+
+    - web
+        - spring.hateoas.use-hal-as-default-json-media-type
+        - spring.mvc.converters.preferred-json-mapper
+        - spring.mvc.format.date
+        - spring.mvc.format.date-time
+        - spring.mvc.format.time
+        - spring.mvc.view.prefix
+        - spring.mvc.view.suffix
+
+        spring.servlet.multipart.enabled : Whether to enable support of multipart uploads. TRUE
+        spring.servlet.multipart.file-size-threshold : Threshold after which files are written to disk. 0B
+        spring.servlet.multipart.location : Intermediate location of uploaded files.
+        spring.servlet.multipart.max-file-size : Max file size. 1MB
+        spring.servlet.multipart.max-request-size : Max request size. 10MB
+        spring.servlet.multipart.resolve-lazily : Whether to resolve the multipart request lazily at the time of file or parameter access.
+
+        아래와 같이 자동으로 format 해주는 것을 일일이 컨트롤러에 달아주면서 포멧하는것이 아닌 전역설정이 가능하다.
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDateTime,
+            - spring.mvc.format.date-time=iso-offset
+        설정을 추가시 다음과 같이 사용해도 된다. => LocalDateTime eventStartDateTime,
+
+        강사 개인적으로는 전역설정보다는 애노테이션을 사용한다고 한다.
