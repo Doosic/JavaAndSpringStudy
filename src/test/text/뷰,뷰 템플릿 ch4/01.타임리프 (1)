@@ -1,0 +1,23 @@
+* 타임리프
+
+    - 타임리프
+      Thymeleaf 는 SpringBoot 에서 밀어주는 view 탬플릿이다.
+      실무에서는 생각보다 잘 안보인다고 한다.
+      modern server-side Java template engine
+
+    - 타임리프 만의 특징, 강점
+        HTML5 웹 표준을 준수하는 템플릿
+        - 전체적인 문법이 HTML5 마크업 표준을 최대한 해치지 않게끔 설계
+        - Decoupled logic: 템플릿 문법을 아예 템플릿에서 분리 가능
+            - 순수한 마크업만 남음 -> 템플릿 엔진이 작동하지 않아도 렌더링되는 정적 목업 페이지
+            - 디자이너가 이해하기 쉬운 코드 (디자이너가 바로 디자인을 확인 가능)
+
+    - 템플릿 문법 적용 방법
+        3가지
+            - "th:" tag
+            - "data-th-" attribute
+            - decoupled logic
+
+    - spring.thymeleaf.cache=false
+        웹서버가 개발시 캐시를 저장하여 바뀐 정보를 제대로 볼 수 없어
+        개발시 불편하다. 배포시에는 켜두도록 하자
