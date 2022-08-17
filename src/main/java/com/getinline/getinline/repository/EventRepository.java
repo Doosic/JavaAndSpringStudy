@@ -4,6 +4,8 @@ import com.getinline.getinline.constant.EventStatus;
 import com.getinline.getinline.dto.EventDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +20,20 @@ public interface EventRepository {
             LocalDateTime eventStartDateTime,
             LocalDateTime eventEndDateTime
     ){
-        return null;
+        List<EventDTO> result = new ArrayList<>();
+        EventDTO eventDTO = EventDTO.builder()
+                .placeId(placeId)
+                .eventName(eventName)
+                .eventStatus(eventStatus)
+                .eventStartDatetime(eventStartDateTime)
+                .eventEndDatetime(eventEndDateTime)
+                .currentNumberOfPeople(5)
+                .capacity(24)
+                .memo("마스크 꼭 착용하세요")
+                .build();
+        result.add(eventDTO);
+
+        return result;
     }
 
     default Optional<EventDTO> findEvent(Long eventId){
