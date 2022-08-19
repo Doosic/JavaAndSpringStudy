@@ -2,6 +2,7 @@ package com.getinline.getinline.dto;
 
 import com.getinline.getinline.constant.EventStatus;
 import com.getinline.getinline.domain.Event;
+import com.getinline.getinline.domain.Place;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventResponse {
 
-    private Long placeId;
+    private Place place;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -29,7 +30,7 @@ public class EventResponse {
 
     public static EventResponse of(EventDTO event){
         return EventResponse.builder()
-                .placeId(event.getPlaceId())
+                .place(event.getPlace())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())
