@@ -1,17 +1,21 @@
 package com.getinline.getinline.repository;
 
 import com.getinline.getinline.constant.EventStatus;
+import com.getinline.getinline.domain.Event;
 import com.getinline.getinline.dto.EventDTO;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 
 // TODO: 인스턴스 생성 편의를 위해 임시로 default 사용
-public interface EventRepository {
+public interface EventRepository extends
+        JpaRepository<Event, Long>,
+        QuerydslPredicateExecutor<Event>{
 
     default List<EventDTO> findEvents(
             Long placeId,

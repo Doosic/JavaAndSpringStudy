@@ -16,6 +16,7 @@ public enum ErrorCode {
     BAD_REQUEST(10000, ErrorCategory.CLIENT_SIDE, "Bad request"),
     SPRING_BAD_REQUEST(10001, ErrorCategory.CLIENT_SIDE, "Spring-detected bad request"),
     VALIDATION_ERROR(10002, ErrorCategory.CLIENT_SIDE, "Validation error"),
+    NOT_FOUND(10003, ErrorCategory.CLIENT_SIDE, "Requested resource is not found"),
 
     // 서버에 문제가 있었을 경우
     INTERNAL_ERROR(20000, ErrorCategory.SERVER_SIDE, "Internal error"),
@@ -28,7 +29,7 @@ public enum ErrorCode {
     private final String message;
 
     // 익셉션을 받을 경우
-    public String getMessage(Exception e){
+    public String getMessage(Throwable e){
         return getMessage(this.getMessage() + " - " +e.getMessage());
     }
 

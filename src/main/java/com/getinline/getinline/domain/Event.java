@@ -1,12 +1,16 @@
 package com.getinline.getinline.domain;
 
 import com.getinline.getinline.constant.EventStatus;
-import lombok.Data;
+import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
+
     private Long id;
 
     private Long placeId;

@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Validated
+//@Validated
 @RequiredArgsConstructor
-@RequestMapping("/api")
-@RestController
+//@RequestMapping("/api")
+//@RestController
 public class APIEventController {
 
     private final EventService eventService;
