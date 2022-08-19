@@ -25,7 +25,7 @@ public class PlaceDTO {
                 .placeName(place.getPlaceName())
                 .address(place.getAddress())
                 .phoneNumber(place.getPhoneNumber())
-                .capacity(place.getCapacity())
+                .capacity(place.getCapacity().toString())
                 .memo(place.getMemo())
                 .build();
     }

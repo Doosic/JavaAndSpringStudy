@@ -2,15 +2,18 @@ package com.getinline.getinline.domain;
 
 import com.getinline.getinline.constant.EventStatus;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@EntityListeners(AuditingEntityListener.class)
+@Entity
 public class Event {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long placeId;
