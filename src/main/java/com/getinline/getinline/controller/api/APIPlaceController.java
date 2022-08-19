@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Deprecated
 //@RequestMapping("/api")
 //@RestController
 public class APIPlaceController {
@@ -22,7 +23,7 @@ public class APIPlaceController {
                 .placeName("야미배드민턴장")
                 .address("서울시 강남구")
                 .phoneNumber("010-1234-1234")
-                .capacity(String.valueOf(30))
+                .capacity(30)
                 .memo("신장개업")
                 .build();
         return APIDataResponse.of(List.of(PlaceResponse.of(place)));
@@ -47,7 +48,7 @@ public class APIPlaceController {
                 .placeName("야미배드민턴장")
                 .address("서울시 강남구")
                 .phoneNumber("010-1234-1234")
-                .capacity(String.valueOf(30))
+                .capacity(30)
                 .memo("신장개업")
                 .build();
         return APIDataResponse.of(PlaceResponse.of(place));

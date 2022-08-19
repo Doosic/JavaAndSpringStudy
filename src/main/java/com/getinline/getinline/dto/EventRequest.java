@@ -1,6 +1,7 @@
 package com.getinline.getinline.dto;
 
 import com.getinline.getinline.constant.EventStatus;
+import com.getinline.getinline.domain.Place;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class EventRequest {
 
     @NotNull
     @Positive
-    private Long placeId;
+    private Place place;
 
     @NotBlank
     private String eventName;
@@ -47,7 +48,7 @@ public class EventRequest {
 
     public static EventRequest of(EventDTO event){
         return EventRequest.builder()
-                .placeId(event.getPlaceId())
+                .place(event.getPlace())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())
@@ -60,7 +61,7 @@ public class EventRequest {
 
     public EventDTO toDTO(){
         return EventDTO.builder()
-                .placeId(this.placeId)
+                .place(this.place)
                 .eventName(this.eventName)
                 .eventStatus(this.eventStatus)
                 .eventStartDatetime(this.eventStartDatetime)
