@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @Entity
+@AllArgsConstructor
+@Builder
 public class Event {
 
     @Id

@@ -40,4 +40,30 @@ public class EventDTO {
                 .modifiedAt(event.getModifiedAt())
                 .build();
     }
+
+    public Event toEntity() {
+        return Event.builder()
+                .place(place)
+                .eventName(eventName)
+                .eventStatus(eventStatus)
+                .eventStartDatetime(eventStartDatetime)
+                .eventEndDatetime(eventEndDatetime)
+                .currentNumberOfPeople(currentNumberOfPeople)
+                .capacity(capacity)
+                .memo(memo)
+                .build();
+    }
+
+    public Event updateEntity(Event event) {
+        if (place != null) { event.setPlace(place); }
+        if (eventName != null) { event.setEventName(eventName); }
+        if (eventStatus != null) { event.setEventStatus(eventStatus); }
+        if (eventStartDatetime != null) { event.setEventStartDatetime(eventStartDatetime); }
+        if (eventEndDatetime != null) { event.setEventEndDatetime(eventEndDatetime); }
+        if (currentNumberOfPeople != null) { event.setCurrentNumberOfPeople(currentNumberOfPeople); }
+        if (capacity != null) { event.setCapacity(capacity); }
+        if (memo != null) { event.setMemo(memo); }
+
+        return event;
+    }
 }

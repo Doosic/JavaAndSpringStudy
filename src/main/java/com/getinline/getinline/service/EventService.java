@@ -23,9 +23,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-    public List<EventDTO> getEvents(Predicate predicate) {
+    public List<EventDTO> getEvents(com.querydsl.core.types.Predicate predicate) {
         try {
-            return StreamSupport.stream(eventRepository.findAll((Sort) predicate).spliterator(), false)
+            return StreamSupport.stream(eventRepository.findAll(predicate).spliterator(), false)
                     .map(EventDTO::of)
                     .collect(Collectors.toList());
         } catch (Exception e) {
@@ -33,20 +33,67 @@ public class EventService {
         }
     }
 
-    public Optional<EventDTO> getEvent(Long eventId){
-        return null;
+    public List<EventDTO> getEvents(
+            Long placeId,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime
+    ) {
+        try {
+            return null;
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
-    public boolean createEvent(EventDTO eventDTO){
-        return false;
+    public Optional<EventDTO> getEvent(Long eventId) {
+        try {
+            return eventRepository.findById(eventId).map(EventDTO::of);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
-    public boolean modifyEvent(Long eventId, EventDTO eventDTO){
-        return false;
+    public boolean createEvent(EventDTO eventDTO) {
+        try {
+            if (eventDTO == null) {
+                return false;
+            }
+
+            eventRepository.save(eventDTO.toEntity());
+            return true;
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
-    public boolean removeEvent(Long eventId){
-        return false;
+    public boolean modifyEvent(Long eventId, EventDTO dto) {
+        try {
+            if (eventId == null || dto == null) {
+                return false;
+            }
+
+            eventRepository.findById(eventId)
+                    .ifPresent(event -> eventRepository.save(dto.updateEntity(event)));
+
+            return true;
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
+    }
+
+    public boolean removeEvent(Long eventId) {
+        try {
+            if (eventId == null) {
+                return false;
+            }
+
+            eventRepository.deleteById(eventId);
+            return true;
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
 }

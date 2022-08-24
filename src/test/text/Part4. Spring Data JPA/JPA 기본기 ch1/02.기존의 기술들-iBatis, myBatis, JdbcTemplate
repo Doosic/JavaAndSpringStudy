@@ -1,0 +1,80 @@
+* 기존의 기술들
+
+    - SQL Mapper
+      RDBMS 쿼리문의 실행 결과를 자바 코드에 매핑하는 프레임워크
+         1. JDBC API 를 사용
+         2. persistence framework
+         3. 프로그램 코드와 SQL 을 분리
+
+    - Apache iBATIS
+      SQL 데이터베이스와 객체 간 매핑을 지원해주는 persistence framework
+        - 지원 언어: Java, .NET, Ruby
+        - SQL 문을 별도의 XML 문서로 작성하여 프로그램 코드와 분리한 형식
+        - 2001년 Clinton Begin 이 개발
+        - 2004년 iBATIS 2.0 릴리즈 - 아파치 소프트웨어 재단에 기증, 아파치에서 6년간 운영됨
+        - 2010년 iBATIS 3.0 릴리즈 - MyBatis 로 개발 프로젝트 이동, 아파치 애틱(Attic) 프로젝트로 분류됨
+        - DAO 패턴이 발전하던 시기
+        - Data Access Object 패턴: 애플리케이션 비즈니스 레이어와 영속성 레이어를 추상화된 API 를 이
+          용하여 분리
+        - DB 접근 구현 클래스를 ~~~Dao 라고 네이밍하는 관례가 많았던 시기
+
+
+    - MyBatis
+        - iBATIS 3.0 에서 출발한 persistence framework (iBATIS 랑 비교할 필요 없이 이거 쓰면된다)
+        - 스프링, 스프링 부트와 연동을 지원
+            1.스프링: org.mybatis:mybatis-spring
+            2.스프링 부트: org.mybatis.spring.boot:mybatis-spring-boot-starter
+        - 다양한 프레임워크와 연동을 지원
+            1.Freemarker, Velocity, Hazelcast, Memcached, Redis, Ignite, Guice
+        - ORM vs. MyBatis
+            1.ORM: 자바 객체를 DB 테이블과 매핑
+            2.MyBatis: 자바 메소드를 SQL 실행 결과와 매핑
+
+        MyBatis 의 재미있는 점!!!
+            원래는 아래와 같이 xml 매퍼로 작성하였다. 그러나 새로 추가된 기능으로
+            어노테이션을 이용하여 sql 을 사용할 수 있다.
+
+            <?xml version="1.0" encoding="UTF-8" ?>
+            <!DOCTYPE mapperPUBLIC "-//mybatis.org//DTD Mapper 3.0//EN""http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+            <mapper namespace ="org.mybatis.example.BlogMapper">
+             <select id="selectBlog" resultType="Blog">
+                select * from Blog where id = #{id}
+             </select>
+            </mapper>
+
+            아래와같이 어노테이션을 이용하여 sql 문을 작성 가능하다.
+            다만 둘중하나를 사용하는 편인데 서브쿼리를 사용하여 쿼리문이 길어진다면 xml 에 빼는게 보기에는 괜찮을지도 모르겠다.
+
+            package org.mybatis.example;
+            public interface BlogMapper{
+            @Select("select * from Blog where id = #{id}")
+             Blog selectBlog(int id);
+            }
+
+            BlogMapper mapper = session.getMapper(BlogMapper.class);
+            Blog blog = mapper.selectBlog(101)
+
+
+    - JDBC API (Spring JDBC)
+      스프링에서 제공하는 jdbc 기반 persistence framework
+        - spring-boot-starter-jdbc (spring-boot-starter-data-jdbc 랑 다름)
+        - JdbcTemplate: Spring JDBC 에서 제공하는 템플릿 클래스. 쿼리 실행과 결과 전달 기능을 제공
+
+
+    - 나쁘진 않지만 아쉬운 영속성 프레임워크
+          - 프로그램 코드에서 아직 SQL 을 완전히 분리하지 못함 (iBatis, MyBatis, JDBC)
+          - 개발자가 여전히 SQL 을 알아야 한다 (개발자가 SQL 을 진짜로 모르는 건 아니지만)
+          - 프로그램이 (특정 DB에 종속된) SQL 을 알아야 한다 -> 전체 코드가 특정 DB 기술과 결합을 가짐
+          - XML 관리: SQL 을 분리하는 목적으로 만들었지만.. 내가 결국 XML 을 알아야 해?
+          - type-safety 를 온전히 활용하지 못한다: 쿼리 실행 결과는 대체로 Map, ResultSet 구조로 넘어옴
+          - 결국 매핑은 내가 구현해 줘야 함
+          - Map 구조가 데이터 클래스와 비교해서 갖는 단점
+          - 어떤 "필드"(맵에서는 key)가 있음을 보장하지 않는다
+          - 각 데이터의 타입을 보장하지 않는다
+          - 결론: 객체 지향적이지 않음
+
+          아래 코드를 보면 rs.getLong("id") 같이 무엇이 들어올지 미리 알고있어야함.
+          jdbcTemplate.query(
+           "SELECT id, first_name, last_name FROM customers WHERE first_name = ?", new Object[] { "Josh" },
+           (rs, rowNum) -> new Customer(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"))
+           ).forEach(customer -> System.out.println(customer.toString()))
