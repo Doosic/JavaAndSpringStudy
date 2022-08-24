@@ -1,0 +1,22 @@
+* 인메모리 테스트 데이터베이스 H2
+
+    - H2
+        스프링 부트가 지원하는, 가장 세팅하기 편한 인메모리 DB
+        - 빠르다, 오픈소스, JDBC API
+        - 다양한 모드 지원: embedded, server, in-memory
+        - 브라우저 콘솔 지원 (h2-console)
+        - 경량 jar: 약 2 MB
+        - 순수 자바로 구현
+        - Compatibility mode: IBM DB2, Derby, HSQLDB, MSSQL, MySQL, Oracle, PostgreSQL
+          폭넓은 db 를 지원한다.
+
+
+        # H2 데이터베이스 콘솔 확인하는 방법
+        spring.h2.console.enabled=true
+        # 테스트 db 로 사용하는 방법
+        spring.datasource.url=jdbc:h2:mem:testdb
+
+        접속 url
+            http://localhost:8080/h2-console
+
+            JDBC URL: jdbc:h2:mem:testdb 입력해주면 바로 들어갈 수 있다.
