@@ -11,10 +11,17 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 public interface EventRepository extends
         JpaRepository<Event, Long>,
         QuerydslPredicateExecutor<Event>,
         QuerydslBinderCustomizer<QEvent> {
+
+    List<Event> findByEventNameAndEventStatus(String eventName, EventStatus eventStatus);
+    Optional<Event> findFirstByEventEndDatetimeBetween(LocalDateTime from, LocalDateTime to);
 
     @Override
     default void customize(QuerydslBindings bindings, QEvent root) {
