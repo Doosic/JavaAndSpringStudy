@@ -14,6 +14,15 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @AllArgsConstructor
+@ToString
+@Table(indexes = {
+        @Index(columnList = "placeId"),
+        @Index(columnList = "eventName"),
+        @Index(columnList = "eventStartDatetime"),
+        @Index(columnList = "eventEndDatetime"),
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "modifiedAt"),
+})
 @Builder
 public class Event {
 
@@ -22,8 +31,8 @@ public class Event {
     private Long id;
 
     @Setter
-    @ManyToOne(optional = false)
-    private Place place;
+    @Column(nullable = false)
+    private Long placeId;
 
     @Setter
     @Column(nullable = false)
@@ -52,10 +61,11 @@ public class Event {
     @Column(nullable = false)
     private Integer capacity;
 
-
     @Setter
     private String memo;
 
+//    @Embedded
+//    private MetaData metaData;
 
     @Column(nullable = false, insertable = false, updatable = false,
             columnDefinition = "datetime default CURRENT_TIMESTAMP")

@@ -1,0 +1,116 @@
+- @Entity 디자인
+
+    - 엔티티 클래스 어노테이션
+      데이터베이스에 저장(persist)할 자바 객체를 정의
+        - 다양한 어노테이션을 이용해 보다 자세한 테이블 스키마 정보를 표현
+        - 어노테이션으로 표현한 스키마 정보와 실제 테이블 스키마가 완벽히 일치해야 할 필요가 없다.
+          똑같이 일치하지않아도 DB 에서 데이터를 읽고 일치하는데 문제가 없다(애러안난다). 오히려 많이써서 스키마 불일치 애러는 날수있다.
+          대기업의 경우 DBA 가 존재하여 스키마를 관리한다. 에플리케이션 개발자들이 데이터베이스를 설계할 책임을 지지않기에
+          DB 에 관한 변경에 관여할 수 없기에 언제나 변경할 수 있게 느슨하게 결합해두는 편이라고 한다.
+        - 하나의 도메인(domain) 으로 간주
+
+
+    - Entity: JPA 어노테이션
+      @Entity 클래스 안에서 사용되는 주요 JPA 어노테이션
+        - @Table, @Index, @UniqueConstraint: 테이블 기본 정보와 인덱스, unique 키를 설정
+        - @Id, @GeneratedValue: primary key 설정
+        - @Column: 각 컬럼 설정
+        - @Enumerated: enum 을 처리하는 방법을 설정
+        - @Transient: 특정 필드를 DB 영속 대상에서 제외
+        - @OneToOne, @OneToMany, @ManyToOne, @ManyToMany: 연관 관계 설정
+        - @MappedSuperClass: 상속을 이용한 공통 필드 정의
+        - @Embedded, @Embeddable: 클래스 멤버를 이용한 공통 필드 정의
+        - @DataTimeFormat: 스프링에서 제공하는 애노테이션, 날짜 입력의 포맷을 지정
+
+
+    - 메타데이터
+      id, createdAtm modifiedAt 등... 들은 데이터들을 위한 데이터들이다.
+      실제 사용자들이 필요한 정보가 아닌, 데이터들을 관리하기 위한 데이터들이다.
+      이런 데이터들을 메타데이터라고 부른다.
+
+      이런 애들은 모든 Entity 에 들어간다. 그래서 이걸 따로 추출하여 사용하는 방법이 있다.
+      class 를 하나 만들고 그곳에다가 정의하고 다른 클래스에서는 상속받아 사용한다.
+      상속을 이용한 공통필드 정의 => @MappedSuperclass 어노테이션 사용 + 상속
+
+        public class MetaData {
+            @Column(nullable = false, insertable = false, updatable = false,
+                    columnDefinition = "datetime default CURRENT_TIMESTAMP")
+            @CreatedDate
+            private LocalDateTime createdAt;
+
+            @Column(nullable = false, insertable = false, updatable = false,
+                    columnDefinition = "datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
+            @LastModifiedDate
+            private LocalDateTime modifiedAt;
+        }
+
+        @MappedSuperclass => 상속을 이용한 공통 필드 정의
+        @Entity
+        public class Event extends MetaData{
+            ...
+        }
+
+      - 또 다른 방법
+         @Embedded, @Embeddable: 클래스 멤버를 이용한 공통 필드 정의
+
+         공통적인 메타데이터들을 사용할 Entity 에서는 @Embedded 를 사용한다.
+             @Embedded
+             private MetaData metaData;
+         공통적인 메타데이터들을 정의할 class 에서는 @Embeddable 을 사용한다.
+            @Embeddable
+            public class MetaData { ... }
+
+
+    - Entity: JPA 엔티티의 lifecycle event 를 활용한 Auditing 테크닉
+      JPA 엔티티에 생성일시, 수정일시 같이 일정하게 작성하는 메타데이터를 처리 가능
+        - @PrePersist
+        - @PostPersist
+        - @PreRemove
+        - @PostRemove
+        - @PreUpdate
+        - @PostUpdate
+        - @PostLoad
+
+    - @Entity: Spring Jpa Auditing 어노테이션
+      엔티티의 생성일시, 수정일시, 생성자, 수정자를 자동으로 관리해주는 어노테이션
+      - 설정
+        - @EnableJpaAuditing
+        - @EntityListeners(AuditingEntityListener.class)
+      - 활용
+        - @CreatedBy
+        - @CreateDate
+        - @LastModifiedBy
+        - @LastModifiedDate
+
+                @Column(nullable = false, insertable = false, updatable = false,
+                        columnDefinition = "datetime default CURRENT_TIMESTAMP") // 이곳은 스키마에 넣어주는 부분이다.
+                @CreatedDate // 자동으로 now 를 해주는 자바코드이다.
+                private LocalDateTime createdAt;
+                목표는 같지만 다른 영역에서 동작하는것 뿐이다. 스키마의 정보를 구체적으로 명시하고싶어서 쓴것뿐
+                실무에서는 아래처럼 간단히 쓴다.
+
+                @Column(nullable = false)
+                @CreateDate
+                private LocalDateTime createdAt;
+
+
+                mySql 기준 id 값 자동증가를 시켜준다.
+                @Id
+                @GeneratedValue(strategy = GenerationType.IDENTITY)
+                private Long id;
+
+                NotNull 필드라는것을 알려준다.
+                @Column(nullable = false)
+
+                @Column(unique) 는 @Table 의 unique 와 같다.
+                @Table 은 복합적으로 사용할 수 있으므로 상황에 따라 맞춰서 쓰자.
+
+                @Setter 는 부분적으로 선택하여 적용한다.
+                물론 이것은 디자인하기 나름이다. 자기 취향.
+
+                @Column(nullable = false, insertable = false, updatable = false,
+                                        columnDefinition = "datetime default CURRENT_TIMESTAMP")
+                - insertable = false, 인서트문을 생성할때에 컬럼이 추가되지 않는다. 안한다는거랑 같다.
+                  값을 insert 할때에 modified 값을 넣지않는곳도 있다. 생성은 수정이 아니기때문에
+                  그러나 null 이 들어가는것은 문제가 생길여지가 있기에 넣는것을 선호한다고 한다.
+
