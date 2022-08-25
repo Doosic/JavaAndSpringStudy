@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventDTO {
 
-    private Place place;
+    private Long placeId;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -28,7 +28,7 @@ public class EventDTO {
 
     public static EventDTO of(Event event){
         return EventDTO.builder()
-                .place(event.getPlace())
+                .placeId(event.getPlaceId())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())
@@ -43,7 +43,7 @@ public class EventDTO {
 
     public Event toEntity() {
         return Event.builder()
-                .place(place)
+                .placeId(placeId)
                 .eventName(eventName)
                 .eventStatus(eventStatus)
                 .eventStartDatetime(eventStartDatetime)
@@ -55,7 +55,7 @@ public class EventDTO {
     }
 
     public Event updateEntity(Event event) {
-        if (place != null) { event.setPlace(place); }
+        if (placeId != null) { event.setPlaceId(placeId); }
         if (eventName != null) { event.setEventName(eventName); }
         if (eventStatus != null) { event.setEventStatus(eventStatus); }
         if (eventStartDatetime != null) { event.setEventStartDatetime(eventStartDatetime); }

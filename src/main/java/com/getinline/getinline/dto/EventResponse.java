@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventResponse {
 
-    private Place place;
+    private Long placeId;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -30,7 +30,7 @@ public class EventResponse {
 
     public static EventResponse of(EventDTO event){
         return EventResponse.builder()
-                .place(event.getPlace())
+                .placeId(event.getPlaceId())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())

@@ -21,7 +21,7 @@ public class EventRequest {
 
     @NotNull
     @Positive
-    private Place place;
+    private Long placeId;
 
     @NotBlank
     private String eventName;
@@ -48,7 +48,7 @@ public class EventRequest {
 
     public static EventRequest of(EventDTO event){
         return EventRequest.builder()
-                .place(event.getPlace())
+                .placeId(event.getPlaceId())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())
@@ -61,7 +61,7 @@ public class EventRequest {
 
     public EventDTO toDTO(){
         return EventDTO.builder()
-                .place(this.place)
+                .placeId(this.placeId)
                 .eventName(this.eventName)
                 .eventStatus(this.eventStatus)
                 .eventStartDatetime(this.eventStartDatetime)
