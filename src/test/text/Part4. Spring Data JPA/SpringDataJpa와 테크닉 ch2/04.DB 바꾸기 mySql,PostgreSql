@@ -1,0 +1,4 @@
+* DB 바꾸기
+
+        MySql => runtimeOnly 'mysql:mysql-connector-java'
+        postgresql => runtimeOnly 'org.postgresql:postgresql'
