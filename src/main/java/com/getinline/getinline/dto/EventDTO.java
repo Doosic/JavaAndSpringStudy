@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventDTO {
 
-    private Long placeId;
+    private Long id;
+    private PlaceDTO placeDTO;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -26,24 +27,53 @@ public class EventDTO {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static EventDTO of(Event event){
-        return EventDTO.builder()
-                .placeId(event.getPlaceId())
-                .eventName(event.getEventName())
-                .eventStatus(event.getEventStatus())
-                .eventStartDatetime(event.getEventStartDatetime())
-                .eventEndDatetime(event.getEventEndDatetime())
-                .currentNumberOfPeople(event.getCurrentNumberOfPeople())
-                .capacity(event.getCapacity())
-                .memo(event.getMemo())
-                .createdAt(event.getCreatedAt())
-                .modifiedAt(event.getModifiedAt())
-                .build();
+    public static EventDTO of(
+            Long id,
+            PlaceDTO placeDto,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
+            Integer currentNumberOfPeople,
+            Integer capacity,
+            String memo,
+            LocalDateTime createdAt,
+            LocalDateTime modifiedAt
+    ) {
+        return new EventDTO(
+                id,
+                placeDto,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo,
+                createdAt,
+                modifiedAt
+        );
     }
 
-    public Event toEntity() {
+    public static EventDTO of(Event event) {
+        return new EventDTO(
+                event.getId(),
+                PlaceDTO.of(event.getPlace()),
+                event.getEventName(),
+                event.getEventStatus(),
+                event.getEventStartDatetime(),
+                event.getEventEndDatetime(),
+                event.getCurrentNumberOfPeople(),
+                event.getCapacity(),
+                event.getMemo(),
+                event.getCreatedAt(),
+                event.getModifiedAt()
+        );
+    }
+
+    public Event toEntity(Place place) {
         return Event.builder()
-                .placeId(placeId)
+                .place(place)
                 .eventName(eventName)
                 .eventStatus(eventStatus)
                 .eventStartDatetime(eventStartDatetime)
@@ -55,7 +85,6 @@ public class EventDTO {
     }
 
     public Event updateEntity(Event event) {
-        if (placeId != null) { event.setPlaceId(placeId); }
         if (eventName != null) { event.setEventName(eventName); }
         if (eventStatus != null) { event.setEventStatus(eventStatus); }
         if (eventStartDatetime != null) { event.setEventStartDatetime(eventStartDatetime); }

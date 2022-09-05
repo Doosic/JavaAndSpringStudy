@@ -8,16 +8,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @Builder
-@NoArgsConstructor
 public class PlaceResponse {
+
+    private Long id;
     private PlaceType placeType;
     private String placeName;
     private String address;
     private String phoneNumber;
-    private String capacity;
+    private Integer capacity;
     private String memo;
+
+    public PlaceResponse(Long id, PlaceType placeType, String placeName, String address, String phoneNumber, Integer capacity, String memo) {
+        this.id = id;
+        this.placeType = placeType;
+        this.placeName = placeName;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.capacity = capacity;
+        this.memo = memo;
+    }
 
     public static PlaceResponse of(Place place){
         return PlaceResponse.builder()
@@ -25,8 +35,20 @@ public class PlaceResponse {
                 .placeName(place.getPlaceName())
                 .address(place.getAddress())
                 .phoneNumber(place.getPhoneNumber())
-                .capacity(place.getCapacity().toString())
+                .capacity(place.getCapacity())
                 .memo(place.getMemo())
                 .build();
+    }
+
+    public static PlaceResponse of(
+            Long id,
+            PlaceType placeType,
+            String placeName,
+            String address,
+            String phoneNumber,
+            Integer capacity,
+            String memo
+    ) {
+        return new PlaceResponse(id, placeType, placeName, address, phoneNumber, capacity, memo);
     }
 }
