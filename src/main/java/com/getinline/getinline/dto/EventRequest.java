@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-@Builder
 @NoArgsConstructor
+@Builder
 public class EventRequest {
 
     @NotNull
@@ -46,30 +46,42 @@ public class EventRequest {
     private String memo;
 
 
-    public static EventRequest of(EventDTO event){
-        return EventRequest.builder()
-                .placeId(event.getPlaceId())
-                .eventName(event.getEventName())
-                .eventStatus(event.getEventStatus())
-                .eventStartDatetime(event.getEventStartDatetime())
-                .eventEndDatetime(event.getEventEndDatetime())
-                .currentNumberOfPeople(event.getCurrentNumberOfPeople())
-                .capacity(event.getCapacity())
-                .memo(event.getMemo())
-                .build();
+    public static EventRequest of(
+            Long placeId,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
+            Integer currentNumberOfPeople,
+            Integer capacity,
+            String memo
+    ){
+        return new EventRequest(
+                placeId,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo
+        );
     }
 
     public EventDTO toDTO(){
-        return EventDTO.builder()
-                .placeId(this.placeId)
-                .eventName(this.eventName)
-                .eventStatus(this.eventStatus)
-                .eventStartDatetime(this.eventStartDatetime)
-                .eventEndDatetime(this.eventEndDatetime)
-                .currentNumberOfPeople(this.currentNumberOfPeople)
-                .capacity(this.capacity)
-                .memo(this.memo)
-                .build();
+        return EventDTO.of(
+                null,
+                null, // TODO: 여기를 반드시 적절히 고쳐야 사용할 수 있음
+                this.eventName,
+                this.eventStatus,
+                this.eventStartDatetime,
+                this.eventEndDatetime,
+                this.currentNumberOfPeople,
+                this.capacity,
+                this.memo,
+                null,
+                null
+        );
     }
 
 }

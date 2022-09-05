@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventResponse {
 
-    private Long placeId;
+    private Long id;
+    private PlaceDTO placeDTO;
     private String eventName;
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
@@ -25,12 +26,11 @@ public class EventResponse {
     private Integer currentNumberOfPeople;
     private Integer capacity;
     private String memo;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 
-    public static EventResponse of(EventDTO event){
+    public static EventResponse of(EventDTO event) {
         return EventResponse.builder()
-                .placeId(event.getPlaceId())
+                .id(event.getId())
+                .placeDTO(event.getPlaceDTO())
                 .eventName(event.getEventName())
                 .eventStatus(event.getEventStatus())
                 .eventStartDatetime(event.getEventStartDatetime())
@@ -38,15 +38,47 @@ public class EventResponse {
                 .currentNumberOfPeople(event.getCurrentNumberOfPeople())
                 .capacity(event.getCapacity())
                 .memo(event.getMemo())
-                .createdAt(event.getCreatedAt())
-                .modifiedAt(event.getModifiedAt())
                 .build();
     }
 
-    public static EventResponse from (EventDTO eventDTO){
-        if(eventDTO == null){return null;}
-        return EventResponse.of(
-                eventDTO
+    public static EventResponse of(
+            Long id,
+            PlaceDTO placeDto,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
+            Integer currentNumberOfPeople,
+            Integer capacity,
+            String memo
+    ) {
+        return new EventResponse(
+                id,
+                placeDto,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo
         );
     }
+
+    public static EventResponse from(EventDTO eventDTO) {
+        if (eventDTO == null) { return null; }
+        return EventResponse.of(
+                eventDTO.getId(),
+                eventDTO.getPlaceDTO(),
+                eventDTO.getEventName(),
+                eventDTO.getEventStatus(),
+                eventDTO.getEventStartDatetime(),
+                eventDTO.getEventEndDatetime(),
+                eventDTO.getCurrentNumberOfPeople(),
+                eventDTO.getCapacity(),
+                eventDTO.getMemo()
+        );
+    }
+
+
 }

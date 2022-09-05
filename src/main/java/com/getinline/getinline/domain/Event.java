@@ -9,10 +9,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
-@EntityListeners(AuditingEntityListener.class)
-@Entity
+@Builder
 @AllArgsConstructor
 @ToString
 @Table(indexes = {
@@ -23,16 +23,20 @@ import java.time.LocalDateTime;
         @Index(columnList = "createdAt"),
         @Index(columnList = "modifiedAt"),
 })
-@Builder
+@EntityListeners(AuditingEntityListener.class)
+@Entity
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 부모가 장소, 자식이 이벤트인 상황
+    // 왼쪽 나 To 오른쪽 너
+    // 여러개 To 하나
     @Setter
-    @Column(nullable = false)
-    private Long placeId;
+    @ManyToOne(optional = false)
+    private Place place;
 
     @Setter
     @Column(nullable = false)
@@ -79,5 +83,59 @@ public class Event {
 
 
     protected Event() {}
+
+    protected Event(
+            Place place,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
+            Integer currentNumberOfPeople,
+            Integer capacity,
+            String memo
+    ) {
+        this.place = place;
+        this.eventName = eventName;
+        this.eventStatus = eventStatus;
+        this.eventStartDatetime = eventStartDatetime;
+        this.eventEndDatetime = eventEndDatetime;
+        this.currentNumberOfPeople = currentNumberOfPeople;
+        this.capacity = capacity;
+        this.memo = memo;
+    }
+
+    public static Event of(
+            Place place,
+            String eventName,
+            EventStatus eventStatus,
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime,
+            Integer currentNumberOfPeople,
+            Integer capacity,
+            String memo
+    ) {
+        return new Event(
+                place,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime,
+                currentNumberOfPeople,
+                capacity,
+                memo
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return id != null && id.equals(((Admin) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventName, eventStartDatetime, eventEndDatetime, createdAt, modifiedAt);
+    }
 
 }
