@@ -35,8 +35,8 @@ dependencies {
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
     // https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.1-api
     implementation group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
-    runtimeOnly 'mysql:mysql-connector-java'
-//    postgresql => runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.30'
+//    runtimeOnly 'org.postgresql:postgresql'
 
 
 

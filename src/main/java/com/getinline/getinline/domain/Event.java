@@ -16,7 +16,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @ToString
 @Table(indexes = {
-        @Index(columnList = "placeId"),
         @Index(columnList = "eventName"),
         @Index(columnList = "eventStartDatetime"),
         @Index(columnList = "eventEndDatetime"),
