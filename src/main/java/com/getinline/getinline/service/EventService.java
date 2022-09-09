@@ -24,9 +24,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-    public List<EventDTO> getEvents(com.querydsl.core.types.Predicate predicate) {
+    public List<EventDTO> getEvents(Predicate predicate) {
         try {
-            return StreamSupport.stream(eventRepository.findAll(predicate).spliterator(), false)
+            return StreamSupport.stream(eventRepository.findAll((Sort) predicate).spliterator(), false)
                     .map(EventDTO::of)
                     .collect(Collectors.toList());
         } catch (Exception e) {

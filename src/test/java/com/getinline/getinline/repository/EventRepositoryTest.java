@@ -32,17 +32,17 @@ class EventRepositoryTest {
         this.testEntityManager = testEntityManager;
     }
 
-    @DisplayName("asdasd")
-    @Test
-    void test(){
-        // Given
-
-        // When
-        Iterable<Event> events = sut.findAll(new BooleanBuilder());
-
-        // Then
-        assertThat(events).contains();
-    }
+//    @DisplayName("asdasd")
+//    @Test
+//    void test(){
+//        // Given
+//
+//        // When
+//        Iterable<Event> events = sut.findAll(new BooleanBuilder());
+//
+//        // Then
+//        assertThat(events).contains();
+//    }
 
 //    private Event createEvent(Place place){
 //        return createEvent(
