@@ -20,9 +20,6 @@ public interface EventRepository extends
         QuerydslPredicateExecutor<Event>,
         QuerydslBinderCustomizer<QEvent> {
 
-    List<Event> findByEventNameAndEventStatus(String eventName, EventStatus eventStatus);
-    Optional<Event> findFirstByEventEndDatetimeBetween(LocalDateTime from, LocalDateTime to);
-
     @Override
     default void customize(QuerydslBindings bindings, QEvent root) {
         bindings.excludeUnlistedProperties(true);

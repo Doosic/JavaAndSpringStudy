@@ -35,6 +35,8 @@ sudo netstat -ntlp | grep mysqld
 wsl2 사용시 ip는 localhost 로 그냥 입력해서 들어가서는 안됌!!!!!!!!!!
 wsl2 는 ip 대역을 따로 가지고있기 때문에 ifconfig로 ip확인 후 접근할것#!@#!@#!@#@!#
 
+Mysql DB에 접속하려면 기본적으로 url, username, password 이 세 가지가 필요합니다.
+하지만 Mysql 8.0 버전부터는 보안적인 이슈로 useSSL 옵션에 대한 추가적인 설정이 필요해졌습니다.
 
 mysql 이 8버전대이고 Public key retrieval is not allowed 에러 발생시 아래처럼 적용
 데이터베이스이름?useSSL=false&allowPublicKeyRetrieval=true
