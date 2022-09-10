@@ -1,89 +1,113 @@
 package com.getinline.getinline.repository;
 
 import com.getinline.getinline.constant.EventStatus;
-import com.getinline.getinline.constant.PlaceType;
-import com.getinline.getinline.domain.Event;
-import com.getinline.getinline.domain.Place;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
+import com.getinline.getinline.dto.EventViewResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.BDDMockito.given;
 
+@DisplayName("DB - 이벤트")
 @DataJpaTest
 class EventRepositoryTest {
 
-    private final EventRepository sut;
-    private final TestEntityManager testEntityManager;
+    private final EventRepository eventRepository;
 
-    EventRepositoryTest(
-            @Autowired EventRepository sut,
-            @Autowired TestEntityManager testEntityManager
-    ) {
-        this.sut = sut;
-        this.testEntityManager = testEntityManager;
+    public EventRepositoryTest(@Autowired EventRepository eventRepository){
+        this.eventRepository = eventRepository;
     }
 
-//    @DisplayName("asdasd")
-//    @Test
-//    void test(){
-//        // Given
-//
-//        // When
-//        Iterable<Event> events = sut.findAll(new BooleanBuilder());
-//
-//        // Then
-//        assertThat(events).contains();
-//    }
+    // TODO: 추후 data.sql 없이 테스트 코드가 돌아가게 만들어보자.
+    @Test
+    void givenSearchParams_whenFindingEventViewResponse_thenReturnsEventViewResponsePage(){
+       // Given
 
-//    private Event createEvent(Place place){
-//        return createEvent(
-//                place,
-//                "test event",
-//                EventStatus.ABORTED,
-//
-//        );
-//    }
+       // When
+       Page<EventViewResponse> eventPage = eventRepository.findEventViewPageBySearchParams(
+               "배드민턴",
+               "운동1",
+               EventStatus.OPENED,
+               LocalDateTime.of(2021,1,1,0,0,0),
+               LocalDateTime.of(2021,1,2,0,0,0),
+               PageRequest.of(0,5)
+       );
 
-    private Event createEvent(
-            long id,
-            long placeId,
-            String eventName,
-            EventStatus eventStatus,
-            LocalDateTime eventStartDateTime,
-            LocalDateTime eventEndDateTime
-    ) {
-        Event event = Event.of(
-                createPlace(placeId),
-                eventName,
-                eventStatus,
-                eventStartDateTime,
-                eventEndDateTime,
-                0,
-                24,
-                "마스크 꼭 착용하세요"
+       // Then
+        assertThat(eventPage.getTotalPages()).isEqualTo(1);
+        assertThat(eventPage.getNumberOfElements()).isEqualTo(1);
+        assertThat(eventPage.getContent().get(0))
+                .hasFieldOrPropertyWithValue("placeName", "서울 배드민턴장")
+                .hasFieldOrPropertyWithValue("eventName", "운동1")
+                .hasFieldOrPropertyWithValue("eventStatus", EventStatus.OPENED)
+                .hasFieldOrPropertyWithValue("eventStartDatetime", LocalDateTime.of(2021,1,1,9,0,0))
+                .hasFieldOrPropertyWithValue("eventEndDatetime", LocalDateTime.of(2021,1,1,12,0,0));
+    }
+
+    @DisplayName("이벤트 뷰 데이터 검색어에 따른 조회 결과가 없으면, 빈 데이터를 페이징 정보와 함께 리턴한다.")
+    @Test
+    void givenSearchParams_whenFindingNonexistentEventViewPage_thenReturnsEmptyEventViewResponsePage() {
+        // Given
+
+        // When
+        Page<EventViewResponse> eventPage = eventRepository.findEventViewPageBySearchParams(
+                "없은 장소",
+                "없는 이벤트",
+                null,
+                LocalDateTime.of(1000, 1, 1, 1, 1, 1),
+                LocalDateTime.of(1000, 1, 1, 1, 1, 0),
+                PageRequest.of(0, 5)
         );
-        ReflectionTestUtils.setField(event, "id", id);
 
-        return event;
+        // Then
+        Assertions.assertThat(eventPage).hasSize(0);
     }
 
-    private Place createPlace(){return createPlace(1L);}
+    @DisplayName("이벤트 뷰 데이터를 검색 파라미터 없이 페이징 값만 주고 조회하면, 전체 데이터를 페이징 처리하여 리턴한다.")
+    @Test
+    void givenPagingInfoOnly_whenFindingEventViewPage_thenReturnsEventViewResponsePage() {
+        // Given
 
-    private Place createPlace(long id){
-        Place place = Place.of(PlaceType.COMMON, "test place", "test address", "010-1234-1234", 24, "22");
-        ReflectionTestUtils.setField(place, "id", id);
+        // When
+        Page<EventViewResponse> eventPage = eventRepository.findEventViewPageBySearchParams(
+                null,
+                null,
+                null,
+                null,
+                null,
+                PageRequest.of(0, 5)
+        );
 
-        return place;
+        // Then
+        Assertions.assertThat(eventPage).hasSize(5);
     }
 
+    @DisplayName("이벤트 뷰 데이터를 페이징 정보 없이 조회하면, 에러를 리턴한다.")
+    @Test
+    void givenNothing_whenFindingEventViewPage_thenThrowsError() {
+        // Given
+
+        // When
+        Throwable t = catchThrowable(() -> eventRepository.findEventViewPageBySearchParams(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
+
+        // Then
+        Assertions.assertThat(t).isInstanceOf(InvalidDataAccessApiUsageException.class);
+    }
 
 }
