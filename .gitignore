@@ -20,6 +20,9 @@ bin/
 ### querydsl
 /src/main/generated
 
+### jooq
+/src/main/generated-jooq
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
