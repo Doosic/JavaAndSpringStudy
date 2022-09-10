@@ -21,50 +21,37 @@ import javax.validation.ConstraintViolationException;
 public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request){
-        return getInternalResponseEntity(
-                e, ErrorCode.VALIDATION_ERROR, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST ,request
-        );
+    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+        return handleExceptionInternal(e, ErrorCode.VALIDATION_ERROR, request);
     }
 
 
     // 위에는 general Exception 이 터졌을 경우에만, 우리가 예상할수 있는 애러
     @ExceptionHandler
-    public ResponseEntity<Object> general(GeneralException e, WebRequest request){
-        ErrorCode errorCode = e.getErrorCode();
-        HttpStatus status = errorCode.isClientSideError() ?
-                HttpStatus.BAD_REQUEST :
-                HttpStatus.INTERNAL_SERVER_ERROR;
-
-        return getInternalResponseEntity(
-                e, errorCode, HttpHeaders.EMPTY, status ,request
-        );
+    public ResponseEntity<Object> general(GeneralException e, WebRequest request) {
+        return handleExceptionInternal(e, e.getErrorCode(), request);
     }
 
     // 일반 예외 처리전략. 예상하지 못하기에 INTERNAL_ERROR 를 던져준다.
     @ExceptionHandler
-    public ResponseEntity<Object> exception(Exception e, WebRequest request){
-        return getInternalResponseEntity(
-                e, ErrorCode.INTERNAL_ERROR, HttpHeaders.EMPTY, HttpStatus.INTERNAL_SERVER_ERROR ,request
-        );
+    public ResponseEntity<Object> exception(Exception e, WebRequest request) {
+        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        // Spring 에서 발생한 Error
-        ErrorCode errorCode = status.is4xxClientError() ?
-                ErrorCode.SPRING_BAD_REQUEST :
-                ErrorCode.INTERNAL_ERROR;
-        return getInternalResponseEntity(
-                ex, errorCode, headers, status ,request
-        );
+        return handleExceptionInternal(ex, ErrorCode.valueOf(status), headers, status, request);
     }
 
-    private ResponseEntity<Object> getInternalResponseEntity(Exception e, ErrorCode errorCode, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, WebRequest request) {
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, errorCode.getHttpStatus(), request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return super.handleExceptionInternal(
                 e,
                 APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
-                HttpHeaders.EMPTY,
+                headers,
                 status,
                 request
         );

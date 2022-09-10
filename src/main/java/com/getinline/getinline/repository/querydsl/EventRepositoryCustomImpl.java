@@ -1,16 +1,21 @@
 package com.getinline.getinline.repository.querydsl;
 
+import com.getinline.getinline.constant.ErrorCode;
 import com.getinline.getinline.constant.EventStatus;
 import com.getinline.getinline.domain.Event;
 import com.getinline.getinline.domain.QEvent;
 import com.getinline.getinline.dto.EventViewResponse;
+import com.getinline.getinline.exception.GeneralException;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public class EventRepositoryCustomImpl extends QuerydslRepositorySupport implements EventRepositoryCustom{
 
@@ -71,6 +76,13 @@ public class EventRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         if (eventEndDatetime != null){
             query.where(event.eventEndDatetime.loe(eventEndDatetime));
         }
-        return null;
+
+        // applyPagination 는 NullPointException 을 일으킬 수 있다.
+        List<EventViewResponse> events = Optional.ofNullable(getQuerydsl())
+                .orElseThrow(() -> new GeneralException(ErrorCode.DATA_ACCESS_ERROR, "Spring Data JPA 로부터 Qeurydsl 인스턴스를 못 가져옴"))
+                .applyPagination(pageable, query)
+                .fetch();
+
+        return new PageImpl<>(events, pageable, query.fetchCount());
     }
 }

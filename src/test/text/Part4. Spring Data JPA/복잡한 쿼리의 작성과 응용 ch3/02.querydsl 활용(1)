@@ -52,7 +52,7 @@
       repository 를 만들때에 이름은 어떻게 만들던지 상관없으나
       그에 구현체를 만들때에는 꼭 Impl 을 달아주어야 한다.
 
-    - querydslImpl 구현시
+    - querydslImpl 구현시 (JPAQuery 를 생성해주는 factory 클래스)
       - JPQLQuery 를 사용하여 Java 코드로 쿼리문을 만들수 있다.
         그러나 select 가 아닌 from 으로 시작하여 뭔가 어색함이있다.
         그래서 보통은 JPAQueryFactory 를 사용하고, 권장하기도 한다.
