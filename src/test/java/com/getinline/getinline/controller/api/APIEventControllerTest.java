@@ -36,14 +36,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled("API 컨트롤러가 필요없는 상황이어서 비활성화")
 @DisplayName("API 컨트롤러 - 이벤트")
 @WebMvcTest(APIEventController.class)
-class ApiEventControllerTest {
+class APIEventControllerTest {
 
     private final MockMvc mvc;
     private final ObjectMapper mapper;
 
     @MockBean private EventService eventService;
 
-    public ApiEventControllerTest(
+    public APIEventControllerTest(
             @Autowired MockMvc mvc,
             @Autowired ObjectMapper mapper
     ) {
@@ -55,7 +55,6 @@ class ApiEventControllerTest {
     @Test
     void givenParameters_whenRequestingEvents_thenReturnsListOfEventsInStandardResponse() throws Exception {
         // Given
-        given(eventService.getEvents(any(), any(), any(), any(), any())).willReturn(List.of(createEventDTO()));
 
         // When & Then
         mvc.perform(
@@ -84,7 +83,6 @@ class ApiEventControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
-        then(eventService).should().getEvents(any(), any(), any(), any(), any());
     }
 
     @DisplayName("[API][GET] 이벤트 리스트 조회 - 잘못된 검색 파라미터")
@@ -103,7 +101,6 @@ class ApiEventControllerTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
-        then(eventService).shouldHaveNoInteractions();
     }
 
     @DisplayName("[API][POST] 이벤트 생성")
@@ -121,7 +118,6 @@ class ApiEventControllerTest {
                 24,
                 "마스크 꼭 착용하세요"
         );
-
         given(eventService.createEvent(any())).willReturn(true);
 
         // When & Then
@@ -331,33 +327,35 @@ class ApiEventControllerTest {
         then(eventService).shouldHaveNoInteractions();
     }
 
+
     private EventDTO createEventDTO() {
-        return EventDTO.builder()
-                .id(1L)
-                .placeDTO(createPlaceDto(1L))
-                .eventStatus(EventStatus.OPENED)
-                .eventStartDatetime(LocalDateTime.of(2021, 1, 1, 13, 0, 0))
-                .eventEndDatetime(LocalDateTime.of(2021, 1, 1, 16, 0, 0))
-                .currentNumberOfPeople(0)
-                .capacity(24)
-                .memo("마스크 꼭 착용하세요")
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
-                .build();
+        return EventDTO.of(
+                1L,
+                createPlaceDto(1L),
+                "오후 운동",
+                EventStatus.OPENED,
+                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
+                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
+                0,
+                24,
+                "마스크 꼭 착용하세요",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
     }
 
     private PlaceDTO createPlaceDto(Long placeId) {
-        return PlaceDTO.builder()
-                .id(placeId)
-                .placeType(PlaceType.COMMON)
-                .placeName("배드민턴장")
-                .address("서울시 가나구 다라동")
-                .phoneNumber("010-1111-2222")
-                .capacity(10)
-                .memo(null)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
-                .build();
+        return PlaceDTO.of(
+                placeId,
+                PlaceType.COMMON,
+                "배드민턴장",
+                "서울시 가나구 다라동",
+                "010-1111-2222",
+                10,
+                null,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
     }
 
 }
