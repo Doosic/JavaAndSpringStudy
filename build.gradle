@@ -9,7 +9,7 @@
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'nu.studer.jooq' version '5.2.2' //6.0.1 은 jooq 버전이 3.15.1 스프링부트에서 자동관리해주는 버전보다 높다.
+//    id 'nu.studer.jooq' version '5.2.2' //6.0.1 은 jooq 버전이 3.15.1 스프링부트에서 자동관리해주는 버전보다 높다.
     id 'java'
     id 'war'
 }
@@ -32,7 +32,7 @@ repositories {
 
 project.ext {
     querydslVersion = dependencyManagement.importedProperties['querydsl.version']
-    jooqVersion = dependencyManagement.importedProperties['jooq.version']
+//    jooqVersion = dependencyManagement.importedProperties['jooq.version']
     mysqlVersion = dependencyManagement.importedProperties['mysql.version']
 }
 
@@ -65,8 +65,8 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
 
     // Jooq 설정 https://start.spring.io/
-    implementation 'org.springframework.boot:spring-boot-starter-jooq'
-    jooqGenerator "mysql:mysql-connector-java:${project.mysqlVersion}"
+//    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+//    jooqGenerator "mysql:mysql-connector-java:${project.mysqlVersion}"
 }
 
 tasks.named('test') {
@@ -99,64 +99,69 @@ tasks.withType(JavaCompile) {
 //}
 
 
-def generatedJooq = 'src/main/generated-jooq'
-jooq {
-    // use jOOQ version defined in Spring Boot
-//    version = dependencyManagement.importedProperties['jooq.version']
-    version = project.jooqVersion
-
-    configurations {
-        main {
-            generationTool {
-                logging = org.jooq.meta.jaxb.Logging.WARN
-                jdbc {
-                    driver = 'com.mysql.cj.jdbc.Driver'
-                    url = 'jdbc:mysql://172.17.47.198:3306/mygetinline?useSSL=false&allowPublicKeyRetrieval=true'
-                    user = 'strou73'
-                    password = '1234'
-                }
-                generator {
-                    name = 'org.jooq.codegen.JavaGenerator'
-                    database{
-                        name = 'org.jooq.meta.mysql.MySQLDatabase'
-                        inputSchema = 'mygetinline'
-                        includes = '.*'
-                        excludes = ''
-                        forcedTypes {
-                            forcedType {
-                                userType = 'com.getinline.getinline.constant.EventStatus'
-                                enumConverter = true
-                                includeExpression = '.*\\.event_status'
-                                includeTypes = '.*'
-                            }
-                            forcedType {
-                                userType = 'com.getinline.getinline.constant.PlaceType'
-                                enumConverter = true
-                                includeExpression = '.*\\.place_type'
-                                includeTypes = '.*'
-                            }
-                        }
-                    }
-                    generate {
-                        deprecated = false
-                        records = true
-                        immutablePojos = true
-                        fluentSetters = true
-                        javaTimeTypes = true // LocalDateTime 을 자동으로 컨버팅
-                    }
-                    target {
-                        packageName = 'com.getinline.getinline'
-                        directory = generatedJooq
-                    }
-                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
-                }
-            }
-        }
-    }
-}
+//def generatedJooq = 'src/main/generated-jooq'
+//jooq {
+//    // use jOOQ version defined in Spring Boot
+////    version = dependencyManagement.importedProperties['jooq.version']
+//    version = project.jooqVersion
+//
+//    configurations {
+//        main {
+//            generationTool {
+//                logging = org.jooq.meta.jaxb.Logging.WARN
+//                jdbc {
+//                    driver = 'com.mysql.cj.jdbc.Driver'
+//                    url = 'jdbc:mysql://172.17.37.139:3306/mygetinline?useSSL=false&allowPublicKeyRetrieval=true'
+//                    user = 'strou73'
+//                    password = '1234'
+//                }
+//                generator {
+//                    name = 'org.jooq.codegen.JavaGenerator'
+//                    database{
+//                        name = 'org.jooq.meta.mysql.MySQLDatabase'
+//                        inputSchema = 'mygetinline'
+//                        includes = '.*'
+//                        excludes = ''
+//                        forcedTypes {
+//                            forcedType {
+//                                userType = 'com.getinline.getinline.constant.EventStatus'
+//                                enumConverter = true
+//                                includeExpression = '.*\\.event_status'
+//                                includeTypes = '.*'
+//                            }
+//                            forcedType {
+//                                userType = 'com.getinline.getinline.constant.PlaceType'
+//                                enumConverter = true
+//                                includeExpression = '.*\\.place_type'
+//                                includeTypes = '.*'
+//                            }
+//                        }
+//                    }
+//                    generate {
+//                        deprecated = false
+//                        records = true
+//                        immutablePojos = true
+//                        fluentSetters = true
+//                        javaTimeTypes = true // LocalDateTime 을 자동으로 컨버팅
+//                    }
+//                    target {
+//                        packageName = 'com.getinline.getinline'
+//                        directory = generatedJooq
+//                    }
+//                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+//                }
+//            }
+//        }
+//    }
+//}
 
 // incremental build (증분 빌드) - Jooq 오브젝트 생성 퍼포먼스 향상: 변경점만 적용
-tasks.named('generateJooq').configure {
-    allInputsDeclared = true
-    outputs.cacheIf{true}
-}
+//tasks.named('generateJooq').configure {
+//    allInputsDeclared = true
+//    outputs.cacheIf{true}
+//}
+
+// Source 가 잘 적용되지 않을시에 강제 적용
+//sourceSets {
+//    main.java.srcDir generatedJooq
+//}
