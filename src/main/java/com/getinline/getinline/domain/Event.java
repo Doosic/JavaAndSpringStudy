@@ -34,7 +34,7 @@ public class Event {
     // 왼쪽 나 To 오른쪽 너
     // 여러개 To 하나
     @Setter
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Place place;
 
     @Setter

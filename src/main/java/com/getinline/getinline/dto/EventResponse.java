@@ -80,5 +80,8 @@ public class EventResponse {
         );
     }
 
+    public String getPlaceName() {
+        return this.placeDTO.getPlaceName();
+    }
 
 }
