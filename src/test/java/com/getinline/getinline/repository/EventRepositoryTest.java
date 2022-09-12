@@ -1,6 +1,7 @@
 package com.getinline.getinline.repository;
 
 import com.getinline.getinline.constant.EventStatus;
+import com.getinline.getinline.domain.Event;
 import com.getinline.getinline.dto.EventViewResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,6 +27,24 @@ class EventRepositoryTest {
 
     public EventRepositoryTest(@Autowired EventRepository eventRepository){
         this.eventRepository = eventRepository;
+    }
+
+    /*
+        @Setter
+        @ManyToOne(optional = false)
+        private Place place;
+        디폴트 동작이기에 (EAGER FETCH) 를 사용하고 있다.
+
+        SpringDataJPA 의 쿼리메서드 findAll() 를 사용하여 조회되는 쿼리 확인시
+        Event 랑 Place 를 조인한 쿼리가 아닌 독립적으로 조회한다.
+        Event 따로 Place 따로 조회
+
+        이럴때에는 findAll() 이 아닌 JPQL 을 직접 작성해서 join 을 영속성 컨텍스트에 알려줘야 함 (ex: querydsl)
+        N + 1 의 문제가 이런것이다.
+    */
+    @Test
+    void testN1() {
+        List<Event> list = eventRepository.findAll();
     }
 
     // TODO: 추후 data.sql 없이 테스트 코드가 돌아가게 만들어보자.

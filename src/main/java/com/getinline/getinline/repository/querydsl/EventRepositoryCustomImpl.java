@@ -38,7 +38,7 @@ public class EventRepositoryCustomImpl extends QuerydslRepositorySupport impleme
             Pageable pageable
     ) {
         QEvent event = QEvent.event;
-
+        // query 에 JoinQuery 는 없지만 Event 가 Place 를 알고있으므로 자동으로 Join 해준다.
         JPQLQuery<EventViewResponse> query = from(event)
                 .select(Projections.constructor(
                         EventViewResponse.class,
