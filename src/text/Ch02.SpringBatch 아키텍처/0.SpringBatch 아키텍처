@@ -1,0 +1,27 @@
+
+    * 스프링 베치의 아키텍처를 먼저 살펴보기 (※SpringBatch 도메인 언어.png 참고)
+          Spring Batch 도메인(특화언어) 언어
+
+          - JobLauncher 는 Job 을 실행시키는 컴포넌트
+          - Job 은 배치 작업. JobRepository 는 Job 실행과 Job, Step 을 저장
+          - Step 은 배치 작업의 단계. ItemReader, ItemProcessor, ItemWriter 는 데이터를 읽고 처리하고 쓰는 구성
+
+          Job 은 1개이고 Step 은 여러개 구성가능하다 (1대 N의 관계를 가지고 있다.)
+
+
+    * Spring Batch 는 3가지 레이어로 구성된다.
+      1.Application Layer
+        - 사용자(=우리) 코드와 구성
+        - 비즈니스, 서비스 로직
+        - Core, Infrastructure 를 이용해 배치 기능을 만든다.
+
+      2.Core Layer
+        - 배치 작업을 시작하고 제어하는데 필수적인 클래스
+        - Job, Step, JobLauncher
+
+      3.Infrastructure Layer
+        - 외부와 상호작용
+        - ItemReader, ItemWriter, Retry Template
+
+      # 요약
+        Spring Batch 가 제공하는 Core 와 Infrastructure 를 활용해 Application 을 구현한다.
