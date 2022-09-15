@@ -1,0 +1,12 @@
+
+    * 프로젝트 세팅
+      wsl2 환경에서 docker 사용시 ifconfig 를 사용하여
+      wsl2에 배정받은 ip를 확인후 localhost 대신 사용.
+
+
+    * SpringBatch 는 Application 이 쭉 실행됐다가 종료된다.
+
+    * JobConfig 에 Job 을 만들고나서 할 일
+      1.Application 설정에 들어가 Program arguments 에
+        --spring.batch.job.names=helloJob
+        만든 Job 을 설정해준다.
