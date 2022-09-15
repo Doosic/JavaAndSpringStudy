@@ -1,0 +1,28 @@
+
+    * 실습
+      빌드 명령어: ./gradlew bootJar
+      참고로 빌드 명령어로 실행시 java 컴파일을 18버전으로 진행.
+      최신버전으로 하는듯 하다. 그냥 Gradle build 로 설정파일 적용되는걸로 하기
+      java -jar ${빌드한파일}.jar --spring.batch.job.names=${잡이름}
+      ex) java -jar build/libs/hello-spring-batch-0.0.1-SNAPSHOT.jar --spring.batch.job.names=helloJob
+
+      - 빌드한 Batch 프로그램은 보통 일정시간마다 동작하게 사용한다.
+        1.OS 스케줄러를 이용한 동작방법 (실무에서는 사용하지 않는다. 하나의 OS 종속되는건 좋지 않다.)
+          한 머신 내부에서 스케줄러를 통해 Batch 프로그램을 실행한다. - 리눅스 crontab
+          - 실행 결과를 log 파일을 남겨 확인한다
+
+        2.Quartz Scheduler
+          Quartz + Spring Batch 프레임워크를 함께 사용해 어플리케이션을 개발한다.
+          - 어플리케이션 내부에서 스케줄링하므로 Batch 실행이 빠르다.
+          - 스케줄링 데이터가 DB에 저장되어 Admin 을 따로 만들어야 한다.
+
+        3.Jenkins (흥미롭다... CI-CD 관심이 많던 시기라 꼭 써보고싶었다.)
+          마스터에서 슬레이브로 명령을 전달해 배치 프로그램을 실행시킨다 - 젠킨스
+          - 젠킨스에서 지원하는 스케줄링 기능을 통해 배치 프로그램을 실행시킬 수 있다.
+          - 젠킨스 Admin 에서 실행 결과를 볼 수 있다.
+
+        4.Spring Cloud Data Flow
+          - Kubernetes 클러스터를 구축해야 한다.
+          - Admin 이 제공되고, 잡의 실행을 연결할 수 있는 등 다양한 기능을 제공한다.
+
+      - 윈도우/맥에서 빌드한 파일이 있는 곳까지 명령프롬프트/터미널을 통해 접근해서 실행
