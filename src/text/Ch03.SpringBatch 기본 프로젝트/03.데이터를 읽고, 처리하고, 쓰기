@@ -1,0 +1,21 @@
+
+    * 데이터를 읽고, 처리하고, 쓰기
+      1.데이터를 읽기 - ItemReader
+      2.데이터를 처리하기 - ItemProcessor
+      3.데이터를 쓰기 - ItemWriter
+
+      chunk 에서 작업단위를 5개로 설정했을때의 결과물!
+      * 5개가 실행된 후 다시 남은 2개가 실행되었다.
+
+      processed goose
+      processed fish
+      processed egg
+      processed dessert
+      processed carrot
+      === chunk is finished ===
+      Hibernate: select plaintext0_.id as id1_0_, plaintext0_.text as text2_0_ from plain_text plaintext0_ order by plaintext0_.id desc limit ?, ?
+      Hibernate: select plaintext0_.id as id1_0_, plaintext0_.text as text2_0_ from plain_text plaintext0_ order by plaintext0_.id desc limit ?, ?
+      Hibernate: select count(plaintext0_.id) as col_0_0_ from plain_text plaintext0_
+      processed banana
+      processed apple
+
