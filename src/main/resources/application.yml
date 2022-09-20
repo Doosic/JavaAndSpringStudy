@@ -35,3 +35,13 @@ spring:
     jdbc:
       # SpringBatch schema 생성유무
       initialize-schema: ALWAYS
+
+---
+spring:
+  config:
+    activate:
+      # 테스트 환경일때의 설정
+      on-profile: test
+  jpa:
+    # 테스트일때에는 h2 데이터베이스 사용
+    database: h2
