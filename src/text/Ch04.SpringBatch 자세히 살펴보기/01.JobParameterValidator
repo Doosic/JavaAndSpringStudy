@@ -1,0 +1,14 @@
+
+    * 다음과 같은 방법으로 간단하게 Value를 넘겨줄 수 있다.
+
+    --spring.batch.job.names=advancedJob -targetDate=2021-01-01
+
+     @StepScope
+         @Bean
+         public Tasklet advancedTasklet(@Value("#{jobParameters['targetDate']}") String targetDate) {
+             return ((contribution, chunkContext) -> {
+                 log.info("[advancedTasklet] JobParameter - targetDate = " +  targetDate);
+                 log.info("[advancedTasklet] executed advancedTasklet");
+                 return RepeatStatus.FINISHED;
+             });
+         }

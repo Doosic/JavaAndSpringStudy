@@ -83,6 +83,16 @@ public class PlainTextJobConfigTest {
         givenPlainTexts(12);
 
         // When
+        /*
+            launchJob(): 모든 단계를 포함하여 전체 작업을 시작합니다. (Launch the entire job, including all steps.)
+            테스트가 종료 상태를 확인할 수 있도록 JobExecution을 던진다.
+            Launch: 시작하다
+            entire: 전체
+            job: 직업, 일
+            including: 포함
+            all: 전체
+            steps: 단계
+         */
         JobExecution execution = jobLauncherTestUtils.launchJob();
 
         // Then
@@ -93,6 +103,7 @@ public class PlainTextJobConfigTest {
         Assertions.assertEquals(resultTextRepository.count(), 12);
     }
 
+    // IntStream.range(0, count) forEach를 통해 0 부터 설정한 카운트까지 증가.
     private void givenPlainTexts(Integer count) {
         IntStream.range(0 , count)
                 .forEach(
