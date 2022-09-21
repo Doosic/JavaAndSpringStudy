@@ -12,3 +12,22 @@
                  return RepeatStatus.FINISHED;
              });
          }
+
+
+
+     * Validator
+       Job에서는 Validator을 사용해 데이터를 검증할 수 있다.
+       Step, Processor 단계에서 데이터를 가공한 이후 Writor 단계나 Tasklet 단계에서 예외가 발생하기보다는
+       미리미리 값을 검증하자.
+
+       1.LocalDateParameterValidator 데이터 검증 클래스를 만들어 사용
+
+
+      @Bean
+          public Job advancedJob(Step advancedStep) {
+              return jobBuilderFactory.get("advancedJob")
+                      .incrementer(new RunIdIncrementer())
+                      .validator(new LocalDateParameterValidator("targetDate")) // validator로 넘어와서는 안될값들을 걸러준다.
+                      .start(advancedStep)
+                      .build();
+          }

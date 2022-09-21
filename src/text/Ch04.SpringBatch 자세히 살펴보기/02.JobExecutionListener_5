@@ -1,0 +1,35 @@
+
+    * JobExecutionListener 잡의 리스너
+      잡이 실행되기 전,후 에 상태를 확인할 수 있다.
+      Job 실행의 성공,실패 여부에 따라 무언가 해주고싶을때에 사용한다.
+      이메일, 카카오톡 알림 등...
+
+
+      성공여부 =====================================================================
+      2022-09-21 23:39:14.892  INFO 16012 --- [           main] c.s.h.job.AdvancedJobConfig              : [jobExecutionListener#beforeJob] jobExecution is STARTED
+      2022-09-21 23:39:14.930  INFO 16012 --- [           main] o.s.batch.core.job.SimpleStepHandler     : Executing step: [advancedStep]
+      2022-09-21 23:39:14.998  INFO 16012 --- [           main] c.s.h.job.AdvancedJobConfig              : [advancedTasklet] JobParameter - targetDate = 2021-01-01
+      2022-09-21 23:39:14.999  INFO 16012 --- [           main] c.s.h.job.AdvancedJobConfig              : [advancedTasklet] executed advancedTasklet
+      2022-09-21 23:39:15.024  INFO 16012 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [advancedStep] executed in 93ms
+      2022-09-21 23:39:15.046  INFO 16012 --- [           main] c.s.h.job.AdvancedJobConfig              : [jobExecutionListener#afterJob] jobExecution is COMPLETED
+
+      @JobScope
+           @Bean
+           public JobExecutionListener jobExecutionListener() {
+              return new JobExecutionListener() {
+                  @Override
+                  public void beforeJob(JobExecution jobExecution) {
+                      log.info("[jobExecutionListener#beforeJob] jobExecution is " + jobExecution.getStatus());
+                  }
+
+                  @Override
+                  public void afterJob(JobExecution jobExecution) {
+                      log.info("[jobExecutionListener#afterJob] jobExecution is " + jobExecution.getStatus());
+                  }
+              };
+           }
+
+
+      실패여부 ======================================================================
+      2022-09-21 23:45:01.436  INFO 15560 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [advancedStep] executed in 59ms
+      2022-09-21 23:45:01.453  INFO 15560 --- [           main] c.s.h.job.AdvancedJobConfig              : [jobExecutionListener#afterJob] jobExecution is FALILED!!! RECOVER ASAP

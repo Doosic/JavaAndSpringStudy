@@ -3,8 +3,7 @@ package com.springbatch.hellospringbatch.job;
 import com.springbatch.hellospringbatch.job.validator.LocalDateParameterValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -27,10 +26,14 @@ public class AdvancedJobConfig {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-     public Job advancedJob(Step advancedStep) {
+     public Job advancedJob(
+             Step advancedStep,
+             JobExecutionListener jobExecutionListener
+    ) {
          return jobBuilderFactory.get("advancedJob")
                  .incrementer(new RunIdIncrementer())
                  .validator(new LocalDateParameterValidator("targetDate")) // validator로 넘어와서는 안될값들을 걸러준다.
+                 .listener(jobExecutionListener)
                  .start(advancedStep)
                  .build();
      }
@@ -41,6 +44,25 @@ public class AdvancedJobConfig {
          return stepBuilderFactory.get("advancedStep")
                  .tasklet(advancedTasklet)
                  .build();
+     }
+
+     @JobScope
+     @Bean
+     public JobExecutionListener jobExecutionListener() {
+        return new JobExecutionListener() {
+            @Override
+            public void beforeJob(JobExecution jobExecution) {
+                log.info("[jobExecutionListener#beforeJob] jobExecution is " + jobExecution.getStatus());
+            }
+
+            @Override
+            public void afterJob(JobExecution jobExecution) {
+                if (jobExecution.getStatus() == BatchStatus.FAILED) {
+                    // job에서 에러가 발생한다면 별도로 알림을 받고싶다(이메일,카톡 등...) 라는 설정을 해볼 수 있다.
+                    log.info("[jobExecutionListener#afterJob] jobExecution is FALILED!!! RECOVER ASAP");
+                }
+            }
+        };
      }
 
      @StepScope
@@ -54,7 +76,9 @@ public class AdvancedJobConfig {
              LocalDate executionDate = LocalDate.parse(targetDate);
              // executionDate -> 로직 수행
              log.info("[advancedTasklet] executed advancedTasklet");
-             return RepeatStatus.FINISHED;
+             // afterJob에서 FAILED 걸리는걸 확인하기 위해 일부러 RuntimeException 발동
+//             throw new RuntimeException("ERROR!!!!");
+//             return RepeatStatus.FINISHED;
          });
      }
 }
