@@ -1,3 +1,16 @@
 
     * FlatFileItemReader
       파일을 읽도록 해준다.
+
+      말 그대로 파일에 있는 데이터를 읽어올 수 있다.
+      아래와 같은 데이터가 있을때에 첫 째줄의 데이터는 컬럼명이므로 건너뛰고
+      두 번째 줄부터 읽어들일 수도 있다. 구분자는 컴마를 사용한다. Dto 를 만들어
+      해당 데이터들을 객체로 구현할 수 있다.
+
+      ID,lastName,firstName,position,birthYear,debutYear
+      AbduKa00,Abdul-Jabbar,Karim,rb,1974,1996
+      AbduRa00,Abdullah,Rabih,rb,1975,1999
+      AberWa00,Abercrombie,Walter,rb,1959,1982
+      AbraDa00,Abramowicz,Danny,wr,1945,1967
+      AdamBo00,Adams,Bob,te,1946,1969
+      AdamCh00,Adams,Charlie,wr,1979,2003

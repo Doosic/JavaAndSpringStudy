@@ -40,8 +40,12 @@ public class AdvancedJobConfig {
 
      @JobScope
      @Bean
-     public Step advancedStep(Tasklet advancedTasklet) {
+     public Step advancedStep(
+             Tasklet advancedTasklet,
+             StepExecutionListener stepExecutionListener
+     ) {
          return stepBuilderFactory.get("advancedStep")
+                 .listener(stepExecutionListener)
                  .tasklet(advancedTasklet)
                  .build();
      }
@@ -61,6 +65,23 @@ public class AdvancedJobConfig {
                     // job에서 에러가 발생한다면 별도로 알림을 받고싶다(이메일,카톡 등...) 라는 설정을 해볼 수 있다.
                     log.info("[jobExecutionListener#afterJob] jobExecution is FALILED!!! RECOVER ASAP");
                 }
+            }
+        };
+     }
+
+     @StepScope
+     @Bean
+     public StepExecutionListener stepExecutionListener(){
+        return new StepExecutionListener() {
+            @Override
+            public void beforeStep(StepExecution stepExecution) {
+                log.info("[stepExecutionListener#beforeStep] stepExecution is " + stepExecution.getStatus());
+            }
+
+            @Override
+            public ExitStatus afterStep(StepExecution stepExecution) {
+                log.info("[stepExecutionListener#afterStep] stepExecution is " + stepExecution.getStatus());
+                return stepExecution.getExitStatus();
             }
         };
      }
