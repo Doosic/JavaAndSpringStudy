@@ -14,7 +14,7 @@ spring:
   datasource:
     # wsl2는 고정ip가 아니기 때문에 ifconfig를 사용해 할당되는 ip를 계속 바꿔줄것.
     ### 중요!!! ip가 바뀌면 clean 후 install을 다시해줘야한다. 재build 할것 그래야 변경된 ip적용
-    url: jdbc:mysql://172.21.226.234:3306/house
+    url: jdbc:mysql://172.21.224.49:3306/house
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: house
     password: house

@@ -78,7 +78,7 @@ public class AdvancedJobConfig {
              log.info("[advancedTasklet] executed advancedTasklet");
              // afterJob에서 FAILED 걸리는걸 확인하기 위해 일부러 RuntimeException 발동
 //             throw new RuntimeException("ERROR!!!!");
-//             return RepeatStatus.FINISHED;
+             return RepeatStatus.FINISHED;
          });
      }
 }
