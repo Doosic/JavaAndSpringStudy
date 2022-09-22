@@ -40,8 +40,12 @@ public class AdvancedJobConfig {
 
      @JobScope
      @Bean
-     public Step advancedStep(Tasklet advancedTasklet) {
+     public Step advancedStep(
+             Tasklet advancedTasklet,
+             StepExecutionListener stepExecutionListener
+     ) {
          return stepBuilderFactory.get("advancedStep")
+                 .listener(stepExecutionListener)
                  .tasklet(advancedTasklet)
                  .build();
      }
@@ -67,6 +71,23 @@ public class AdvancedJobConfig {
 
      @StepScope
      @Bean
+     public StepExecutionListener stepExecutionListener(){
+        return new StepExecutionListener() {
+            @Override
+            public void beforeStep(StepExecution stepExecution) {
+                log.info("[stepExecutionListener#beforeStep] stepExecution is " + stepExecution.getStatus());
+            }
+
+            @Override
+            public ExitStatus afterStep(StepExecution stepExecution) {
+                log.info("[stepExecutionListener#afterStep] stepExecution is " + stepExecution.getStatus());
+                return stepExecution.getExitStatus();
+            }
+        };
+     }
+
+     @StepScope
+     @Bean
      public Tasklet advancedTasklet(@Value("#{jobParameters['targetDate']}") String targetDate) {
          return ((contribution, chunkContext) -> {
              log.info("[advancedTasklet] JobParameter - targetDate = " +  targetDate);
@@ -78,7 +99,7 @@ public class AdvancedJobConfig {
              log.info("[advancedTasklet] executed advancedTasklet");
              // afterJob에서 FAILED 걸리는걸 확인하기 위해 일부러 RuntimeException 발동
 //             throw new RuntimeException("ERROR!!!!");
-//             return RepeatStatus.FINISHED;
+             return RepeatStatus.FINISHED;
          });
      }
 }
