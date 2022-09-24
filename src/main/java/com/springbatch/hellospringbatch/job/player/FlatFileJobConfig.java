@@ -1,7 +1,9 @@
 package com.springbatch.hellospringbatch.job.player;
 
 
+import com.springbatch.hellospringbatch.core.service.PlayerSalaryService;
 import com.springbatch.hellospringbatch.dto.PlayerDto;
+import com.springbatch.hellospringbatch.dto.PlayerSalaryDto;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -10,7 +12,9 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -48,19 +52,54 @@ public class FlatFileJobConfig {
 
     @JobScope
     @Bean
-    public Step flatFileStep(FlatFileItemReader<PlayerDto> playerFileItemReader) {
+    public Step flatFileStep(
+            FlatFileItemReader<PlayerDto> playerFileItemReader,
+            ItemProcessorAdapter<PlayerDto, PlayerSalaryDto> playerSalaryItemProcessorAdapter
+    ) {
         return stepBuilderFactory.get("flatFileStep")
                 // PlayerDto 를 PlayerSalaryDto 로 변경한다.
-                .<PlayerDto, PlayerDto>chunk(5)
+                .<PlayerDto, PlayerSalaryDto>chunk(5)
                 .reader(playerFileItemReader)
-                .writer(new ItemWriter<PlayerDto>() {
+                .processor(playerSalaryItemProcessorAdapter)
+                .writer(new ItemWriter<>() {
                     @Override
-                    public void write(List<? extends PlayerDto> items) throws Exception {
+                    public void write(List<? extends PlayerSalaryDto> items) throws Exception {
                         items.forEach(System.out::println);
                     }
                 })
                 .build();
     }
+
+    /*
+        Adapter 을 사용하면 좋은점(조금더 간단해진다. 가독성 향상)
+        - ItemProcessor을 별도로 만들어서 호출하는것과 같은 동작을 한다.
+        - TargetObject로 호출할 서비스를 지정하고
+        - TargetMethod를 통해 사용할 메서드를 지정한다.
+     */
+    @StepScope
+    @Bean
+    public ItemProcessorAdapter<PlayerDto,PlayerSalaryDto> playerSalaryItemProcessorAdapter(
+            PlayerSalaryService playerSalaryService
+    ) {
+        ItemProcessorAdapter<PlayerDto,PlayerSalaryDto> adapter = new ItemProcessorAdapter<>();
+        adapter.setTargetObject(playerSalaryService);
+        adapter.setTargetMethod("calcSalary");
+        return adapter;
+    }
+
+    @StepScope
+    @Bean
+    public ItemProcessor<PlayerDto, PlayerSalaryDto> playerSalaryItemProcessor(
+            PlayerSalaryService playerSalaryService
+    ){
+        return new ItemProcessor<PlayerDto, PlayerSalaryDto>() {
+            @Override
+            public PlayerSalaryDto process(PlayerDto item) throws Exception {
+                return playerSalaryService.calcSalary(item);
+            }
+        };
+    }
+
 
     /*
         FlatFileItemReader 를 통해 File에 있는 데이터를 읽어들일 수 있다.
