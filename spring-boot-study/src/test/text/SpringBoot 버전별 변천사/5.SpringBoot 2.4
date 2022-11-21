@@ -1,0 +1,95 @@
+* 2.4 주요 변경사항 요약
+    - 버전 네이밍 변화
+    - Java 15, Startup Logging
+    - Jar Optimizations
+    - JUnit Vintage Engine
+    - 설정 파일 처리 기능 변화 (.properties, .yaml)
+    - Logback 설정 변경, Property Migrator
+    - @ConstructorBinding (in 2.2) 과 발전사항
+    - Origin chains
+    - Docker, Buildpack 지원 내용 업데이트
+
+
+    - 버전 네이밍 변화
+        - as-is: 2.3.0.RELEASE
+        - to-be:2.4.0
+
+
+    - Java 15, Startup Logging
+        - Java 15 공식 지원
+        - JVM 버전이 애플리케이션 시작할 때 로그에 추가됨
+
+
+    - Jar Optimizations
+        - 비어있는 starter 의존성들이 jar 패키징할 때 자동으로 제외됨(의존성들을 부르기 위한 starter 의존성 파일)
+        - annotation processor 도 자동 제외됨 (빌드가 끝나면 필요가 없음)
+        - spring-boot-autoconfigure-processor
+        - spring-boot-configuration-processor
+        - Layered jar 기본 동작, layertools 자동 포함
+
+
+    - JUnit Vintage Engine
+        - junit-vintage-engine 이 spring-boor-starter-test 에서 빠짐
+        - JUnit 4 를 계속 사용하고 싶은 경우 직접 넣어줘야 함
+
+
+    - 설정 파일 처리 기능 변화 (.properties, .yaml)
+        - properties 에서 yaml 처럼 document 구분하기
+        - 프로퍼티 파일에서 yaml 처럼 document 구분하기 가능: #---
+        - 일관된 우선 순위: 나중에 읽힌 document, 아래쪽 document
+        - spring.config.import: 다른 프로퍼티 파일을 삽입 가능
+          프로퍼티 파일을 프로퍼티 파일안에 넣어줄 수 있다.
+          중복되는 설정의 문제를 제거하기위해 뒤에 실행되는것이 덮어쓰면서 실행된다.
+        - "optional:"
+          import 시 파일이 없다면 에러가나고 애플리케이션이 죽게되는데
+          다음 파일이 없어도 무시할 수 있는 기능.
+
+        - application[.properties]
+          my 파일에 확장자가 없어도 my.properties 라고 확장자를 붙여준다.
+
+        - Config Tree
+          쿠버네티스에 시크릿이라는 개념이 있고 파일계층을 이용한다.
+          프로퍼티스를 읽을수 있는 다양한 기능이 생겨났다.
+
+        - 버그! -> 2.4.1 (https://github.com/spring-projects/spring-boot/issues/24171)
+
+
+    - Logback 설정 변경, Property Migrator
+        - https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-
+          Release-Notes#logback-configuration-properties
+        - spring-boot-properties-migrator 도움을 받자
+        - 성능에 영향을 미치니까 다 고친 뒤엔 삭제하는 것 잊지 않기
+
+
+    - @ConstructorBinding (in 2.2) 과 발전사항
+        - 2.2 에서 처음 지원한 기능
+        - @ConstructorBinding
+        - @DefaultValue
+        - 2.4 에서 발전된 기능
+        - @DurationUnit, @DataSizeUnit, @PeriodUnit
+        - @Name
+
+
+    - Origin chains
+        - 버전 네이밍 변화
+        - Java 15, Startup Logging
+        - JUnit Vintage Engine
+        - 설정 파일 처리 기능 변화 (.properties, .yaml)
+        - Logback 설정 변경, Property Migrator
+        - @ConstructorBinding (in 2.2) 과 발전사항
+        - Origin chains
+        - Docker, Buildpack 지원 내용 업데이트
+
+
+    - Docker, Buildpack 지원 내용 업데이트
+        - Publishing Images: 생성된 image를 docker registry에 업로드
+        - Authentication
+        - buildpack support를 통해 private docker registry를 사용
+        - username/password 방식과 token 기반 인증 지원
+        - Paketo Buildpack Defaults: 최신 Paketo images를 기본으로 사용
+        - Paketo image registry: GCR -> Docker Hub
+        - Buildpack Support
+        - 모든 project module 의존성을 "application" layer에 포함
+        - multiple project module로 구성할 경우 모두 같은 layer에 담김
+        - Maven: spring-boot:build-image
+        - Gradle: bootBuildImage

@@ -1,0 +1,60 @@
+* 2.2 주요 변경사항 요약
+
+      - SpringBoot 2.2
+            - 성능 향상
+            - Java 13 + Spring Framework 5.2
+            - 주요 버전 업그레이드
+            - Deprecations from 2.1
+            - Jakarta EE
+            - Junit 5
+            - Gradle 4.10
+
+
+      - 성능 향상
+            - 시작 시간과 메모리 사용이 더욱 감소
+            - 새 속성 추가: proxyBeanMethods=false
+              이걸 붙일시에 라이트 빈이 시작되고 프록시 빈을 만드는데 걸리는 시간이 단축된다.
+              그러나 프록시 기능의 여러가지 혜택을 받을 수 없다.
+            - @Configuration
+            - @SpringBootApplication
+            - @SpringBootConfiguration
+            - spring-boot:run, bootRun -> -Xverify:none -XX:TieredStopAtLevel=1
+            - JDK 13 쓸 경우: -Xverify:none 가 deprecated 되었기 때문에 빠짐
+            - spring.main.lazy-initialization
+            - 부작용 1: http request 핸들링 속도가 조금 더 길어짐
+            - 부작용 2: 시작할 때 문제가 있다면 보여주던 실패를 더이상 보여주지 않음
+
+
+      - Java 13 + Spring Framework 5.2
+
+
+      - 주요 버전 업그레이드
+            -  Spring HATEOAS 1.0
+            - Spring Kafka 2.3
+            - Spring Security 5.2
+            - Hamcrest 2.1
+            - Mockito 3.1
+            - AssertJ 3.12
+            - Elasticsearch 6.7
+            - Git Commit ID Plugin 3.0
+            - Hazelcast 3.12
+            - Jackson 2.10
+            - Jedis 3.1
+            - Lettuce 5.2
+
+
+      - Deprecations from 2.1
+            - 스프링 부트 2.1 에서 deprecated 된 클래스, 메소드, 프로퍼티들이 삭제됨
+            - https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1-
+              Release-Notes#deprecations-in-spring-boot-21
+
+
+       - Jakarta EE
+            - javax. group ID -> jakarta. 로 이동
+            - com.sun.mail:javax.mail -> com.sun.mail:jakarta.mail
+            - org.glassfish:javax.el -> org.glassfish:jakarta.el
+
+
+      - Junit 5(자동 내장)
+
+      - Gradle 4.10

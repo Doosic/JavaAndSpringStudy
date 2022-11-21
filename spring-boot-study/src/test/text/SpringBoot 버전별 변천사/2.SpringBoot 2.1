@@ -1,0 +1,67 @@
+* 2.1 주요 변경사항 요약
+
+    - SpringBoot 2.1
+        - 성능향상
+        - Spring Data JPA: bootstrap-mode
+        - JDK 11 + Spring Framework 5.1
+        - 주요 버전 업그레이드
+        - Deprecations from 2.0
+        - New Spring Actuator Endpoints
+        - Logging Refinements
+        - JUnit
+        - Bean Overriding
+
+
+        - 성능향상
+            - GC 속도 향상 - 더 빠른 시작
+            - 더 적은 heap 사용
+
+        - Spring Data JPA: bootstrap-mode
+            - Spring Data Lovelace
+            - lazy initialization
+            - spring.data.jpa.repositories.bootstrap-mode=deferred(or lazy)
+              repositories Bean 들이 사용되기 전까지 빈초기화 시점을 늦추는 것이다.
+
+        - JDK 11 + Spring Framework 5.1
+
+        - 주요 버전 업그레이드
+            - Tomcat9
+            - Undertow2
+            - Hibernate5.3
+            - JUnit5.2
+            - Micrometer1.1
+
+        - Deprecations from 2.0
+            - setConnectTimeout(int),setReadTimeout(int)
+            - data size 를 int 입력 인자로 받던 메소드들은 Data size 로 변경 및 deprecated
+            - management.endpoints.jmx.unique-names -> spring.jmx.unique-names
+            - @AutoConfigureMockMvc 의 secure 속성 -> @WithMockUser
+            - RestTemplateBuilder.basicAuthorization -> basicAuthentication
+            - AbstractFilterRegistrationBean, FilterRegistrationBean
+                - as-is: REQUEST_WRAPPER_FILTER_MAX_ORDER
+                - to-be: OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER
+
+        - New Spring Actuator Endpoints
+            - /actuator/caches 추가
+            - /actuator/integrationgraph 추가
+            - /actuator/health 기능 업데이트
+            - HealthIndicator 를 런타임에 추가, 삭제 가능
+            - 특정 인디케이터만 관찰 가능 (ex: /actuator/health/db)
+
+        - Logging Refinements
+            - logging.level.web=debug
+            - spring.http.log-request-details=true
+              request, response 에 담긴 내용은 보안에 민감하기에 따로 설정을 해주어야 한다.
+
+        - JUnit
+            - JUnit 5 사용 가능
+            - spring-boot-test -> 5.3.1
+            - 그러나 기본 세팅은 JUnit 4
+            - JUnit 5로 바꾸려면 빌드 설정에 명시해야 함 (메이븐 레포지토리에 가서 검색해서 쓰거나, 이제는 높은 버전에 부트를 사용하면된다.)
+            - @ExtendWith(SpringExtension.class) 을 모든 부트 @-Test 애노테이션에 내재화
+
+        - Bean Overriding
+            - 사용자가 모르게 빈이 오버라이드 되지 않도록, 기본 동작 false
+            - 오버라이드가 감지되면: BeanDefinitionOverrideException
+            - spring.main.allow-bean-definition-overriding=true
+              사용자가 모르게 Overriding 가 일어나서는 안된다.

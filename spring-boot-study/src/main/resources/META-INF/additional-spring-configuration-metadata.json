@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "api.custom.properties.height",
+      "type": "java.lang.Integer"
+    }
+  ],
+  "hints": [
+    {
+      "name": "api.custom.properties.height",
+      "values": [
+        {
+          "value": 180,
+          "description": "20대."
+        },
+        {
+          "value": 190,
+          "description": "30대."
+        }
+      ]
+    }
+  ]
+}

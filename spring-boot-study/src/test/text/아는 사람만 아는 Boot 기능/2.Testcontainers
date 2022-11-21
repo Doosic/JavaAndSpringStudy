@@ -1,0 +1,41 @@
+* 외부 장지와 연결된 기능의 통합 테스트
+    (예) MySql 에 접근하는 부분의 테스트
+        - H2 이용: 편하지만 MySQL 과 동일한 환경은 아님 (예상 못한 문제 발생)
+        - Mocking: 테스트 가능해 지지만, 이것도 MySQl 로 인해 발생하는 문제를 감지 못함
+        - 로컬에 프로젝트가 필요한 것과 동일한 세팅으로 MySQL 설치
+            1. 번거로움, 리소스를 잡아먹음
+            2. 새로 셋업하는 개발 컴퓨터에서는 실패하는 테스트 (MySQL 존재를 몰랐기 때문에)
+        - MySQL 을 docker 에 올림
+            1. 테스트를 실행할 때마다 docker 를 올리고, 내리는 작업을 따로 해줘야함
+
+
+    도커를 활용할 수 있는 또 한가지 방법
+        1.DB 등의 외부 장치를 코드로 표현하고, 자동으로 DOCKER 이미지로 만들고 등록/해체
+        2.외부 장치와 연관이 있는 부분의 통합 테스트를 용이하게
+        3.자바 라이브러리, JUNIT 호환
+        4.https://www.testcontainers.org/
+
+
+    테스트 컨테이너 의존성 추가
+        1.스프링 이니셜라이즈에 들어가서 testContainer 을 추가후 확인한다.
+            - testImplementation 'org.testcontainers:junit-jupiter'
+
+
+    사용법
+        1.테스트 할 클래스에 @Testcontainers 어노테이션을 붙여준다.
+        2.도커이미지를 주입한다. 허브에가면 다양하게 제공하는 이미지들을 볼수있다. https://hub.docker.com/_/redis
+        static final String REDIS_IMAGE = "redis:latest";
+        @Container
+        private static final GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse(REDIS_IMAGE))
+                    .withExposedPorts(6379)
+                    .withReuse(true);
+        3.@DynamicPropertySource
+          redis 는 보통 6379 라는 포트가 고정이나 테스트시에는 랜덤이다. 그래서 나중에 주입해주는 방식으로
+          사용한다.
+        @DynamicPropertySource
+        static void propertiesDynamic(DynamicPropertyRegistry registry){
+            // registry.add("spring.cache.type", () -> "redis");
+            registry.add("spring.redis.host", redisContainer::getHost);
+            registry.add("spring.redis.port", () -> redisContainer.getMappedPort(6379));
+        }
+
