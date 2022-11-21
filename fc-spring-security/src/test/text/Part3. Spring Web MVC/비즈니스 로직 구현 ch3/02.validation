@@ -1,0 +1,56 @@
+* validation
+
+    사용자 입력값에 있을지 모르는 오류를 처리하려면?
+        - 모든 입력단 앞에 방어 코드가 추가됨
+        - 방어 코드는 복잡하고 반복적 - 대표적인 boilerplate code
+
+
+    - 좋은 코드는 관심사가 잘 분리되어있다.
+        - validation 은 주관심사는 아니다. 그러나 뺴놓을 수는 없기에
+          계속해서 들어가는 패턴이 나온다. 매번 검증을 시행하기에는
+          같은 코드가 계속 생긴다. 그걸 방지하기 위해 애노테이션 기반으로 검증을 돕는것이 추가되었다.
+
+
+    - validation in Boot
+        build.gradle 에 spring-boot-starter-validation 의존성 추가
+            - Spring Boot 2.3 이전 : spring-boot-starter-web 에 기본 포함되어있었음
+            - Spring Boot 2.3 이후 : 직접 넣어줘야 한다.
+
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        벨리데이션은 사용하는 사람도 있고, 직접 구현하는 사람도 있다. 그런데 기본값으로 넣으면 스프링이
+        무거워지기에 직접 구현하여 사용하는 사람들을 위해 직접 추가하도록 변경되었다고 한다.
+
+
+
+    - Validation in Boot: 사용 패턴
+
+        1.@Validated + 메서드 파라미터 검증
+          메서드 파라미터에 validation annotation 을 직접 사용해서 검증하는 방법
+            - 클래스에 @Validated 필요
+            - 발생 예외: ConstraintViolationException, 직접 처리해 줘야 하는 예외
+            - ConfigurationProperties 클래스에도 적용 가능
+
+            @Validated
+            public class APIController {
+                @GetMapping()
+                public APIDateResponse ... get(
+                    @Size(min = 2) String eventName
+                ){ ... }
+            }
+
+
+        2.@Valid + Data Object
+          검증하려는 데이터 오브젝트에만 검증 로직을 적용할 때
+            - @Validated 필요하지 않음
+            - 발생 예외 : MethodArgumentNotValidException
+                - ResponseEntityExceptionHandler 지원을 받을 수 있다
+
+              public APIDataResponse ... createEvent(
+                    @Valid @RequestBody EventRequest eventRequest
+              )
+              {...}
+
+              public class EventRequest{
+                @NotNull @Positive Long placeId
+              }

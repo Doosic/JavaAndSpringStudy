@@ -1,0 +1,240 @@
+* 서비스 로직 오류처리
+
+    TODO
+        - 에러 코드 테스트
+        - 예외 처리 로직 입출력 테스트
+        - 서비스 로직에 유의미한 에러 처리를 추가해보기
+
+* 에러 코드 테스트
+
+    - 아래와 같이 테스트코드를 짠다면 에러코드 OK 에 대한 테스트코드일 뿐이고
+      그 아래에 다른 테스트코드들을 추가한다면 6~10개 많은 반복코드가 추가될것이다.
+      그래서 이것을 더 유용하게 하기위한 다른 테스트 기법이 있다.
+      ParameterizedTest 기법이라 한다.
+
+    @Test
+    @DisplayName("예외를 받으면, 예외 메시지가 포함된 메시지 출력")
+        void givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage() {
+            // Given
+            Exception e = new Exception("This is test message.");
+
+            // When
+            String result = ErrorCode.OK.getMessage(e);
+
+            // Then
+            assertThat(result).isEqualTo("Ok - This is test message.");
+        }
+
+
+    - ParameterizedTest
+      최근의 모던한 프레임워크는 모두 지원하고 있고
+      Junit4 부터 지원했다. Junit5 는 좀 더 정돈된 방법으로 지원한다.
+      @MethodSource => 입력 소스로 메소드를 받을 수 있다. 이 외에도 몇가지 소스를 받는 방법들이 있다.
+      메서드는 이름이 같아야한다. @MethodSource("이름지정가능") 다음과 같이 메서드 이름도 지정이 가능하다.
+      그러나 이름을 똑같이하는게 찾기와 보기가 쉽다.
+
+      아래와 같이 테스트시 출력되는 모양을 꾸며줄 수 도 있다.
+      @ParameterizedTest(name = "[{index}] {0} ===> {1}")
+
+      @ParameterizedTest
+          @MethodSource
+          @DisplayName("예외를 받으면, 예외 메시지가 포함된 메시지 출력")
+          void givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage(ErrorCode sut, String expected) {
+              // Given
+              Exception e = new Exception("This is test message.");
+
+              // When
+              String result = sut.getMessage(e);
+
+              // Then
+              assertThat(result).isEqualTo(expected);
+          }
+
+          static Stream<Arguments> givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage(){
+              return Stream.of(
+                      arguments(ErrorCode.OK, "Ok - This is test message."),
+                      arguments(ErrorCode.BAD_REQUEST, "Bad request - This is test message."),
+                      arguments(ErrorCode.SPRING_BAD_REQUEST, "Spring-detected bad request - This is test message."),
+                      arguments(ErrorCode.VALIDATION_ERROR, "Validation error - This is test message."),
+                      arguments(ErrorCode.INTERNAL_ERROR, "Internal error - This is test message."),
+                      arguments(ErrorCode.SPRING_INTERNAL_ERROR, "Spring-detected internal error - This is test message.")
+              );
+          }
+
+
+    - 아래는 애러메세지를 직접 입력받았을떄의 테스트이다.
+
+        @ParameterizedTest(name = "[{index}] \"{0}\" ===> {1}")
+            @MethodSource
+            @DisplayName("에러 메세지를 받으면, 해당 애러 메세지로 출력")
+            void givenMessage_whenGettingMessage_thenReturnsMessage(String input, String expected) {
+                // Given
+
+                // When
+                String result = ErrorCode.INTERNAL_ERROR.getMessage(input);
+
+                // Then
+                assertThat(result).isEqualTo(expected);
+            }
+
+            static Stream<Arguments> givenMessage_whenGettingMessage_thenReturnsMessage(){
+                return Stream.of(
+                        arguments(null, ErrorCode.INTERNAL_ERROR.getMessage()),
+                        arguments("", ErrorCode.INTERNAL_ERROR.getMessage()),
+                        arguments("   ", ErrorCode.INTERNAL_ERROR.getMessage()),
+                        arguments("This is test message.", "This is test message.")
+
+                );
+            }
+
+
+    - 아래는 ToString 으로 에러를 어떻게 보여줄지 테스트하는 방법이다.
+     @DisplayName("toString() 호출 포맷")
+        @Test
+        void givenErrorCode_whenToString_thenReturnsSimplifiedToString(){
+            // Given
+
+
+            // When
+            String result = ErrorCode.INTERNAL_ERROR.toString();
+
+            // Then
+            assertThat(result).isEqualTo("INTERNAL_ERROR (20000)");
+        }
+
+
+
+
+* 예외 처리 로직 입출력 테스트
+
+    WebRequest 를 인자로 받고있는 모습을 볼 수 있다. 그러나 테스트에서는
+    request 가 주요 관심사는 아니기에 Mock 으로 대체한다.
+    public ResponseEntity<Object> general(ConstraintViolationException e, WebRequest request){ ... }
+
+    // 검증시 나오는 오류에 대한 바디, 해더, 상태코드의 형식을 원하는 대로 나오는지 테스트해본다.
+    @DisplayName("검증 오류 - 응답 데이터 정의")
+        @Test
+        void givenValidationException_whenCallingValidation_thenReturnsResponseEntity(){
+            // Given
+            ConstraintViolationException e = new ConstraintViolationException(Set.of());
+
+            // When
+            ResponseEntity<Object> response = sut.validation(e, webRequest);
+
+            // Then
+            System.out.println(response.getBody());
+            System.out.println(response.getHeaders());
+            System.out.println(response.getStatusCode());
+            assertThat(response)
+                    .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(false, ErrorCode.VALIDATION_ERROR, e))
+                    .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
+                    .hasFieldOrPropertyWithValue("statusCode", HttpStatus.BAD_REQUEST);
+
+        }
+
+    // 프로젝트에서 사용할 GeneralException 일반적인 오류사항들이 원하는 대로 나오는지 테스트해본다.
+    @DisplayName("프로젝트 일반 오류 - 응답 데이터 정의")
+        @Test
+        void givenGeneralException_whenCallingValidation_thenReturnsResponseEntity(){
+            // Given
+            ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
+            GeneralException e = new GeneralException(errorCode);
+
+            // When
+            ResponseEntity<Object> response = sut.general(e, webRequest);
+
+            // Then
+            System.out.println(response.getBody());
+            System.out.println(response.getHeaders());
+            System.out.println(response.getStatusCode());
+            assertThat(response)
+                    .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(false, errorCode, e))
+                    .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
+                    .hasFieldOrPropertyWithValue("statusCode", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+    // 잡아내지 못한 오류사항들
+    @DisplayName("기타(전체) 오류 - 응답 데이터 정의")
+        @Test
+        void givenOtherException_whenCallingValidation_thenReturnsResponseEntity(){
+            // Given
+            Exception e = new Exception();
+
+            // When
+            ResponseEntity<Object> response = sut.exception(e, webRequest);
+
+            // Then
+            System.out.println(response.getBody());
+            System.out.println(response.getHeaders());
+            System.out.println(response.getStatusCode());
+            assertThat(response)
+                    .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(false, ErrorCode.INTERNAL_ERROR, e))
+                    .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
+                    .hasFieldOrPropertyWithValue("statusCode", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+
+
+* 리펙토링
+
+    APIExceptionHandler 클래스에 다음과 같은 코드가 계속 반복된다.
+    이걸 메서드로 추출해보자. Ctrl + Shift + A => Extract Method... 클릭
+    위의 커멘드키 입력시 자동으로 메서드를 생성해준다.
+
+    return super.handleExceptionInternal(
+                    e,
+                    APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
+                    HttpHeaders.EMPTY,
+                    status,
+                    request
+            );
+
+
+
+* 서비스 로직에 유의미한 에러 처리를 추가해보기
+
+    많은 에러들이 있고 Service 로직에서는 예상치 못한 오류들이 발생할 수 있다.
+    데이터베이스에서 날수도있고, JPA 에서도 발생할 수 있다. Exception 처리를 해뒀기에
+    500에러로 처리가 되겠지만, 발생되는 예상치 못한 모든오류들을
+    500Error 로 처리하면 에러처리를 하는 의미가 없다.
+    그런 오류들을 잡아서 의미있는 애러로 내보내보자.
+
+     @DisplayName("이벤트를 검색하는데 애러가 발생한 경우, 줄서기 프로젝트 기본 에러로 전환하여 예외를 던진다.")
+        @Test
+        void givenDataRelatedException_whenSearchingEvents_thenThrowsGeneralException(){
+            // Given
+            RuntimeException e = new RuntimeException("This is test.");
+            given(eventRepository.findEvents(any(), any(), any(), any(), any()))
+                    .willThrow(e);
+
+            // When
+            Throwable thrown = catchThrowable(() -> sut.getEvents(null,null,null,null,null));
+
+            // Then
+            assertThat(thrown)
+                    .isInstanceOf(GeneralException.class)
+                    .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage());
+            then(eventRepository).should().findEvents(null,null,null,null,null);
+        }
+
+     우리가 아는 애러메세지로 전환해서 내보냈다. return 시에 try, catch 로 감싸서
+     구체적으로 에러를 명시해주었다.
+
+     public List<EventDTO> getEvents(
+                 Long placeId,
+                 String eventName,
+                 EventStatus eventStatus,
+                 LocalDateTime eventStartDateTime,
+                 LocalDateTime eventEndDateTime
+         ){
+             try {
+                 return eventRepository.findEvents(
+                         placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime
+                 );
+             }
+             catch (Exception e){
+                 throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR);
+             }
+         }

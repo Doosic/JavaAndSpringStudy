@@ -1,0 +1,100 @@
+* Rest Repositories
+
+    Repository 로 부터 REST API 를 자동으로 만들어주는 기술
+        - Spring Data Rest 를 사용
+        - 페이징, 정렬, 리미트 사용 가능
+        - QueryDSL Extension 을 함께 사용하면 큰 노력 없이 컬럼별 검색 기능까지 사용 가능
+
+
+    - 편리해 보이는데, 실무에서 많이 사용하나요?
+      사실 많이 사용하지 않습니다.
+        - 도메인을 직업 api 에 노출하는 것을 꺼림
+        - 복잡한 요구사항에 맞춰 api 설계를 하고 싶은 경우에는 부적합
+        - 설정을 잘 하지 않으면 불필요한 API 가 노출될 수도 있음
+        - 실무에서는 API 는 필요에 따라 직접 만드는 편
+
+    - 이럴 땐 사용을 고려해보자
+        - 내부에서 사용하는 애플리케이션을 만들 때
+        - 도메인이 복잡하지 않을때
+        - 요구사항이 복잡하지 않고 심플한 CRUD 로 구성되어있을 때
+        - 빠르게 만들어야 할 때
+
+
+    - JPA 및 memory database 추가 (h2)
+        만약 버전이 잘 안맞는 문제가 생긴다면. h2 가 아니라 다른것들도!
+        스프링 프로젝트를 만드는 사이트에가서 버전을 선택후 라이브러리들을 선택해준다.
+        그 후에 들어간 코드들을 살펴보면 된다.
+
+        implementation 'org.springframework.boot:spring-boot-starter-data-jap'
+        implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+        runtimeOnly 'com.h2database:h2'
+
+
+
+
+    - JPA 간단하게 알고가기
+        - 도메인 테이블 @Entity 추가
+          Entity 는 데이터베이스 테이블과 서로 연관관계를 지을수 있는
+          자바 오브젝트를 만든다는 의미이다.
+
+          Entity 에는 primary Key 가 꼭 필요하며 왠만하면 자동증가를 사용하자.
+          @Id
+          @GeneratedValue(strategy = GenerationType.IDENTITY)
+          private Long id;
+
+
+        - 레포지토리 JpaRepository 상속받기
+          JpaRepository<도메인, Key 값>
+          ex) public interface EventRepository extends JpaRepository<Event, Long>
+
+
+        - application.properties 설정들
+
+            로그에서 hibernate 가 작성하는 쿼리문을 보는것(bindingParameter 가 ??? 나오는것을 볼 수 있게 해준다.)
+            logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace
+
+            스프링부트 2.5 부터는 database 를 inmemory 에 테이블을 만들고 셋팅하려면 initialization 를 true 로 설정해주어야 한다.
+            spring.jpa.defer-datasource-initialization=true
+
+            Entity 정보를 읽어 테이블을 만든다.
+            spring.jpa.hibernate.ddl-auto=create-drop
+
+            log 에 sql 문장 표출
+            spring.jpa.show-sql=true
+
+            log 에 sql 문장을 좀 더 이쁘게 포맷
+            spring.jpa.properties 여기까지는 스프링이 지원하나 그 뒤부터는 구현체가 hibernate 이기 때문에
+            spring 이 지원하는것이 아니라 hibernate 가 지원하는것이기에 jboss.org 에 가서 properties 를 잘 찾아
+            설정해보자.
+            spring.jpa.properties.hibernate.format_sql=true
+
+            API(기본 root path 를 api 로 잡아두었다.)
+            spring.data.rest.base-path=/api
+
+
+
+    - JPA 의 이름으로 쿼리문을 짤때의 문제점.
+
+        Spring data jpa 를 이용해 find query 를 만들때 다음과 같이 만든다면...?
+        ex) Optional<Event> findByPlaceIdAndEventNameAndAndCapacity();
+        다음 예제는 null 을 넣을수 없고 3개의 조건이 모두 들어가야한다.
+        이 3개가 들어가는 단 한가지의 경우만을 위해서 쿼리를 만들어야한다.
+        Dynamic 하게 이용할 수 없다.
+
+        만약 검색하고 싶지 않은것이 있다면? 검색할 수 없어야 하는것이 있다면?
+        customize 라는걸 만든다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

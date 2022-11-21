@@ -1,0 +1,35 @@
+* EqualsAndHashcode 를 사용할때의 문제점
+
+    엔티티의 동등성 비교를 편하게 하려고 롬복을 도입했는데 엔티티는 자바의 데이터 클래스랑은 다른 특성을 이용해
+    이 동등성 기준을 각 필드 전체 비교에서 `id` 비교로 하고자 함
+    즉 'a(id=1)', 'b(id=1)' 일 때, 'a.equals(b) == True'
+
+    그러나 id는 persistence context가 관리하므로 서비스 코드에서 처음 만들 땐 'null' 인데,
+    롬복이나 ide 자동 작성 코드는 이 부분을 'true' 로 처리한다.
+    즉 'a(id=null)', 'b(id=null)' 일 때, 'a.equals(b) == True'
+
+    그냥 보면 맞는 것 같지만 실은 둘이 단지 아직 'id' 를
+    부여받지 못했을 뿐, 다른 데이터를 가진
+    서로 다른 엔티티일 수 있기 때문에,
+    'equals()' 직접 구현이 필요.
+
+    한편 `hashCode()`도 구현해줘야 하는데
+    동등성 기준을 `id`로 잡는다면 `hashCode()` 기준값도
+    `id`를 이용해 다양한 수를 만들면 좋지만
+    위와 같은 이유로 영속화가 안된 엔티티는 아직 `id`가 없으므로
+    그냥 상수를 넣든지, 다른 방법이 필요함
+
+    상수를 넣어도 큰 무리 없지만 좀 더 효율적으로 만들기 위해
+    각 엔티티 인덱스 컬럼을 활용해 `hash()` 생성
+
+     @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            return id != null && id.equals(((Admin) obj).getId());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(email, nickname, phoneNumber, createdAt, modifiedAt);
+        }
