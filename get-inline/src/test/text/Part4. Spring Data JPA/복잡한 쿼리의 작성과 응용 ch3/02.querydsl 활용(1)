@@ -1,0 +1,82 @@
+* Querydsl
+
+    JPQL 작성 라이브러리
+    - Spring Data JPA 와 조합하여 보다 복잡한 쿼리를 type-safe 하게 작성 가능
+      - 커스텀 key join
+      - 자유로운 query projection (Join 시 가져오고싶은 컬럼만 가져와 데이터 사이즈를 줄일수 있다.)
+    - Spring Data JPA Repository interface 와 매끄럽게 연동
+    - Spring Data 에서 다양한 서포트 지원
+      - QuerydslRepositorySupport: EntityManager를 노출하지 않고, Querydsl 필요 기능 직접 지원
+      - QuerydslPredicateExecutor: Predicate 을 이용한 dynamic select, Spring Data REST 지원
+      - QuerydslBinderCustomizer: 파라미터 바인딩의 세부 기능 조절을 지원
+
+
+    - buildGradle 설정
+
+      implementation "com.querydsl:querydsl-jpa"
+      // implementation "com.querydsl:querydsl-core" => core 는 jpa 에 포함되어있기에 넣지않아도 된다.
+      implementation "com.querydsl:querydsl-collections" => 추가적인 collection 기능이다.
+      annotationProcessor("jakarta.persistence:jakarta.persistence-api") // java.lang.NoClassDefFoundError(javax.annotation.Entity) 발생 대응
+      annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+      annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
+
+      // generated 폴더의 위치를 지정하는 변수
+      def generated='src/main/generated'
+
+      // querydsl QClass 파일 생성 위치를 지정
+      asks.withType(JavaCompile) {
+          options.getGeneratedSourceOutputDirectory().set(file(generated))
+      }
+
+      // gradle clean 시에 QClass 디렉토리 삭제
+      clean {
+          delete file(generated)
+      }
+
+      // java source set 에 querydsl QClass 위치 추가
+      sourceSets {
+          main.java.srcDirs += [ generated ]
+      }
+
+
+    * 기본 PATH에 generated 를 지정하지 않는 이유
+      gradle 설정이 아닌 intellij 의 도움을 받아서 빌드를 할 때에 gradle build 를 실행시키고 intellij 도 돈다
+      그렇기에 처음 gradle 이 돌때에 generated 가 만들어지고, 한번더 intellij 가 돌때에 generated 에
+      같은 파일들이 있기에 오류가 난다(둘다 같은 위치를 본다). 2번이나 도는것이다.
+
+      gradle 과 intellij 가 만들어주는 generated 의 위치를 다르게 눈속임을 하는것이다.
+      원래는 없는게 맞는것이다.
+
+
+    - querydsl repository
+      repository 를 만들때에 이름은 어떻게 만들던지 상관없으나
+      그에 구현체를 만들때에는 꼭 Impl 을 달아주어야 한다.
+
+    - querydslImpl 구현시 (JPAQuery 를 생성해주는 factory 클래스)
+      - JPQLQuery 를 사용하여 Java 코드로 쿼리문을 만들수 있다.
+        그러나 select 가 아닌 from 으로 시작하여 뭔가 어색함이있다.
+        그래서 보통은 JPAQueryFactory 를 사용하고, 권장하기도 한다.
+        그러나 이건 SpringDataJpa 를 사용하지 않을때이고, 사용한다면
+        JPQLQuery 를 사용하는것이 코드량이 줄어 괜찮다고 한다.
+        (SpringDataJPA 가 SUPPORT 를 이용해 JPQLQuery 를 지원)
+
+
+    - JPQLQuery
+      JPQLQuery<EventViewResponse> query = from(event)
+                      .select(Projections.constructor(
+                              EventViewResponse.class,
+                              event.id,
+                              event.place.placeName,
+                              event.eventName,
+                              event.eventStatus,
+                              event.eventStartDatetime,
+                              event.eventEndDatetime,
+                              event.currentNumberOfPeople,
+                              event.capacity,
+                              event.memo
+                      ));
+      CustomProjection 은 크게 3가지 방법이 있다.
+      setter 주입, 생성자주입, @queryProjection 을 이용한 주입
+
+
+

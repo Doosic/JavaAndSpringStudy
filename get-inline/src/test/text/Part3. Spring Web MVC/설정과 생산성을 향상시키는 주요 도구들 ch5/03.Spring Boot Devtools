@@ -1,0 +1,39 @@
+* Devtools
+
+    스프링 부트 개발의 절친
+        - 스프링 부트 모듈들의 세부 설정을 개발에 적합한 형태로 자동으로 바꿔줌 (ex: 캐시 끄기)
+        - Automatic restart - 자바 코드가 바뀌면 자동으로 애플리케이션을 재시작
+        - Live reload - 정적 페이지가 바뀌면 자동으로 브라우저 웹페이지 refresh
+
+        의존성 추가 방법
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+
+
+    - Restart vs. Cold start
+
+        자동 재시작은 생각보다 빠르다
+            - devtools classloader: base classloader + restart classloader
+            - restart (triggered by devtools): restart classloader 만 갱신함 (개발에서 자주 바뀌는 부분)
+            - cold start (부트 직접 재시작): 전체 classloader 갱신
+            - Restart triggering condition: classpath 안의 소스코드가 업데이트 되었을 때
+            - build project
+            - "build project automatically": 소스코드 변경할 때 마다 자동으로 빌드 시작 -> 수시로 restart
+            - maven: mvn compile
+            - gradle: gradle build
+
+
+        Restart vs. Reload
+        소스코드 변경의 더 빠른 반영을 원한다면
+            - JRebel 을 살펴보세요
+            - 매우 빠름 (거의 즉시, 늦어도 3초 내외면 소스코드 변경이 애플리케이션에 반영됨)
+            - 생산성 향상
+            - 유료
+
+
+
+        Live Reload
+        웹페이지에 변경점이 발생하면 바로 refresh
+            - embedded Live Reload server
+            - browser extension 설치 필요: chrome, firefox, safari 지원
+            - 리소스에 변경이 일어나면 브라우저 리프레쉬를 트리거

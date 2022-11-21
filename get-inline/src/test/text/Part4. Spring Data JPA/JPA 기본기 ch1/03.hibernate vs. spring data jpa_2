@@ -1,0 +1,25 @@
+* hibernate 와 spring data jpa 차이점이 무엇인가? (spring data jpa)
+
+    - 스프링에서 제공하는 JPA 추상화 모듈
+        - JPA 구현체의 사용을 한번 더 Repository 라는 개념으로 추상화
+        - JPA 구현체의 사용을 감추고, 다양한 지원과 설정 방법을 제공
+        - JPA 기본 구현체로 Hibernate 사용
+        - Querydsl 지원
+
+
+    - Spring Data JPA 를 사용하면서 알아야 할 사실
+      JPA, 하이버네이트를 몰라도 되어야 한다.
+        - EntityManager 를 직접 사용하지 않는다
+        - JPQL 을 직접 사용하지 않는다
+        - persist(), merge(), close() 를 직접 사용하지 않는다
+        - 트랜잭션을 getTransaction(), commit(), rollback() 으로 관리하지 않는다
+        - 코드가 하이버네이트를 직접 사용하고 있다면
+            1.꼭 필요한 코드인지, 아니면 Spring Data JPA 로 할 수 있는 일인지 확인하세요
+            2.그 코드는 하이버네이트와 직접적인 연관 관계를 가지게 됨
+            3.추상화의 이점을 포기하게 되는 셈
+
+
+
+            추상화된 내용들이 궁금하다면?
+            public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T, ID>
+            여기로 가서 살펴보면된다!

@@ -1,0 +1,116 @@
+* 함수 기반 설계
+    - 함수형 프로그래밍?
+        함수형 프로그래밍은 자료 처리를 수학적 함수의 계산으로 취급하고 상태와 가변 데이터를 멀리하는 프로그래밍
+        패러다임의 하나이다.
+
+        - 특징
+            1.상태가 없음
+            2.대입문이 없음
+            3.부작용이 없는 순수 함수
+            4.불변성
+        - 역사: 오래되었다.
+            1.1930, 람다 대수
+            2.1954, IPL
+            3.1958, LISP
+            4.1990, Haskell
+
+    - 함수형 엔드포인트
+        Spring Web 의 엔드포인트를 함수형 스타일로 작성하는 방법을 제공
+            1.WebMvc.fn
+            2.routing, request handling
+            3.불변성을 고려하여 설계됨
+            4.기존의 DispatcherServlet 위에서 동작
+            5.애노테이션 스타일과 함께 사용 가능
+
+    - 주요 키워드
+        - HandlerFunction == @RequestMapping
+            1.입력: ServerRequest
+            2.출력: ServerResponse
+        - RouterFunction == @RequestMapping
+            1.입력: ServerRequest
+            2.출력: Optional<HandlerFunction>
+
+        - HandlerFunction VS. RouterFunction
+            - HandlerFunction 의 결과: data
+              데이터에 집중
+            - RouterFunction 의 결과 : data + behavior (ex: url mapping)
+              데이터 뿐만 아니라 그 행위까지, 사용자의 요청과 매핑하여 돌려준다.
+
+    - 기타 세부 키워드
+        1.RequestPredicates
+        2.RouterFunctions.route().nest()
+        3.RouterFunctions.route().before()
+        4.RouterFunctions.route().after()
+        5.RouterFunctions.Builder.onError()
+        6.RouterFunctions.Builder.filter()
+
+    - Reference
+     • https://ko.wikipedia.org/wiki/함수형_프로그래밍
+     • https://en.wikipedia.org/wiki/Functional_programming
+     • https://blog.cleancoder.com/uncle-bob/2012/12/22/FPBE1-Whats-it-allabout.html
+     • https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#webmvc-fn
+
+
+     - 함수 기반 설계 시작
+        1.함수 기반으로 사용할 컨트롤러 역할을 할 클래스를 만들어준다.
+          클래스 어노테이션은 @Configuration 를 붙여준다.
+          아래와 같이 작성
+
+          @Configuration
+          public class APIPlaceRouter {
+              @Bean
+              public RouterFunction<ServerResponse> placeRouter() {
+                  return route().nest(path("/api/places"), builder -> builder
+                          .GET("", req -> ServerResponse.ok().body(List.of("place1", "place2")))
+                          .POST("", req -> ServerResponse.ok().body(true))
+                          .GET("/{placeId}", req -> ServerResponse.ok().body("place" + req.pathVariable("placeId")))
+                          .PUT("/{placeId}", req -> ServerResponse.ok().body(true))
+                          .DELETE("/{placeId}", req -> ServerResponse.ok().body(true))
+                  ).build();
+              }
+          }
+
+        2.핸들러 펑션
+          implements HandlerFunction 를 붙여줘서 필요한 메소드를 받아서 알아보자
+          왜냐? 어떤걸 사용해야하는지 익숙하지 않으면 알기 힘드니깐! 꼼수다.
+          =========================================================================================
+          @Configuration
+          public class APIPlaceRouter {
+
+              @Bean
+              public RouterFunction<ServerResponse> placeRouter(APIPlaceHandler apiPlaceHandler) {
+                  return route().nest(path("/api/places"), builder -> builder
+                          .GET("", apiPlaceHandler::getPlaces)
+                          .POST("", apiPlaceHandler::createPlaces)
+                          .GET("/{placeId}", apiPlaceHandler::getPlace)
+                          .PUT("/{placeId}", apiPlaceHandler::modifyPlace)
+                          .DELETE("/{placeId}", apiPlaceHandler::removePlace)
+                  ).build();
+              }
+          }
+          ========================================================================================
+          @Component
+          public class APIPlaceHandler {
+
+              public ServerResponse getPlaces(ServerRequest request) throws Exception {
+                  return ok().body(List.of("place1", "place2"));
+              }
+
+              // TODO: 1은 구현할 때 제대로 넣어주자
+              public ServerResponse createPlaces(ServerRequest request) throws Exception {
+                  return created(URI.create("/api/places/1")).body(true);
+              }
+
+              public ServerResponse getPlace(ServerRequest request) throws Exception {
+                  return ok().body("place" + request.pathVariable("placeId"));
+              }
+
+              public ServerResponse modifyPlace(ServerRequest request) throws Exception {
+                  return ok().body(true);
+              }
+
+              public ServerResponse removePlace(ServerRequest request) throws Exception {
+                  return ok().body(true);
+              }
+          }
+          =========================================================================================

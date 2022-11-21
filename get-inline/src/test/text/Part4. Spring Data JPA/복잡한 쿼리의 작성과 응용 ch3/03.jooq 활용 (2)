@@ -1,0 +1,31 @@
+* jooq 활용 (2)
+
+  * Jooq, 좋은 이유
+    - Jooq 방식으로 사용한다면, 엔티티를 작성할 필요가 없다. (데이터베이스 스키마를 잘 만들어두면 된다)
+    - 로그가 보기 예쁘다
+        1.query 로그 안에 binding parameter 가 함께 포함됨
+        2.결과 로그가 예쁘다.
+
+
+  * Jooq, 불편한 이유
+    ORM 기술이 아니기 때문에, Spring Data JPA 와 결이 잘 안 맞음
+    - JPA 와 정반대의 매커니즘: Jooq 클래스가 엔티티 클래스를 방해
+    - JPA 기술이 아니어서 오는 문제점
+        1. Spring Data JPA 트랜잭션 연동이 힘듬: 자체 트랜잭션 기술 -> Jooq 코드가 서비스에 노출
+          기능이 준비되어있긴하다. 그러나 직접 서비스에서 주크 코드를 노출시켜야한다(작성해야함).
+        2. 하이버네이트 auto-ddl 사용 불가, DB 스키마는 이미 준비되어 있어야 함
+    - 스프링과 연동되어있지 않아서 오는 불편함
+        1. 스프링 Pageable 정보로부터 Jooq 쿼리를 조립하기가 상당히 까다로움
+    - gradle 플러그인을 쓸 경우, DB 정보가 build.gradle 에 침투함(build.gradle 에 DB 정보 작성.)
+        1. DB 기본 정보, 로깅, 타입 변환(enum 등) 정보, 패키지 정보, DB dialect, JDBC 드라이버 정보...
+    - 그리고 매뉴얼도 꽤 어려움.. 레퍼런스도 적고.
+
+
+
+  * 스프링이 초기에 밀어줬지만 Querydsl 에 밀리는 또 하나의 이유
+    유료.
+    - Open Source 플랜만 무료
+      - open source DB dialect 지원: derby, firebird, h2, hsqldb, ignite, mariadb, mysql,
+        postgresql, sqlite
+      - 지원 안되는 대표적인 DB: ms access, oracle, sql server, aurora, bigquery, db2, snowflake 등
+    - Express, Professional, Enterprise 플랜에 따라 단계별 과금

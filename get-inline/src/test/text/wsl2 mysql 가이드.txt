@@ -1,0 +1,43 @@
+계정정보
+strou73/1234
+데이터베이스
+mygetinline
+
+strou73@localhost
+
+테스트
+SELECT Host,User,plugin,authentication_string FROM mysql.user;
+
+
+데이터베이스 생성
+create database 데이터베이스명 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+유저 생성
+create user 사용자이름 identified by '패스워드';
+create user strou73 identified by '1234';
+
+권한부여 및 ip에 따른 접근권한 열어주기
+GRANT ALL PRIVILEGES ON *.* TO '아이디'@'%' IDENTIFIED BY '패스워드';
+GRANT ALL PRIVILEGES ON *.* TO 'strou73'@'%';
+
+FLUSH PRIVILEGES;
+
+다음 위치에가서 mysqld.cnf 파일의 bind-adrress 변경 0.0.0.0 으로
+cd /etc/mysql/mysql.conf.d/
+
+이후 재시작
+service mysql restart
+
+ip검사
+sudo netstat -ntlp | grep mysqld
+
+***중요 참조!
+wsl2 사용시 ip는 localhost 로 그냥 입력해서 들어가서는 안됌!!!!!!!!!!
+wsl2 는 ip 대역을 따로 가지고있기 때문에 ifconfig로 ip확인 후 접근할것#!@#!@#!@#@!#
+
+Mysql DB에 접속하려면 기본적으로 url, username, password 이 세 가지가 필요합니다.
+하지만 Mysql 8.0 버전부터는 보안적인 이슈로 useSSL 옵션에 대한 추가적인 설정이 필요해졌습니다.
+
+mysql 이 8버전대이고 Public key retrieval is not allowed 에러 발생시 아래처럼 적용
+데이터베이스이름?useSSL=false&allowPublicKeyRetrieval=true
+mygetinline?useSSL=false&allowPublicKeyRetrieval=true

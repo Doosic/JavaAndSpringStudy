@@ -1,0 +1,36 @@
+* Querydsl vs jooq
+  둘의 동작은 반대된다. querydsl 은 Entity 로 부터 db 스키마를 코드 만든다면,
+  jooq 는 db 스키마를 읽어 Entity 즉, 자바 Object 를 만든다.
+
+    - Querydsl
+      "Unified Queries for Java. Querydsl is compact, safe and easy to learn."
+      - 자바 코드(엔티티) -> DB 쿼리 생성 도구
+      - HQL 생성 라이브러리
+        - type-safety 가 부족한 HQL(JPQL)의 대안
+        - 읽기 어려운 Criteria API의 대안
+
+    - 기존 기술과의 비교
+      - JPQL: type=safety 가 좀 아쉽다. 기존 sql 쿼리문을 작성하는것과 거의 다르지 않은 느낌이다.
+      - Criteria: 어렵다. 그냥 대충 딱봐서는 뭔지 잘 모르겠다.
+
+    - Querydsl 코드
+      - 보다 readable 한 쿼리 작성 (잘 읽히고 쉽게 작성가능)
+      - 편리한 join
+      - 스프링 Pageable(페이징 관련) 과 매끄러운 연동
+
+
+
+    - Jooq
+      "jOOQ generates Java code from your database and lets you build type safe SQL queries
+      through its fluent API."
+      - DB schema -> Java class 생성 도구
+      - ORM framework 가 아님
+      - "jOOQ is not a replacement for JPA"
+        - SQL 이 잘 어울리는 곳엔, Jooq 가 잘 맞아요
+        - Object Persistence 가 잘 어울리는 곳엔, JPA 가 잘 맞아요
+      - Jooq says: "Jooq + JPA"
+
+
+    참고자료
+    - https://querydsl.com/
+    - https://www.jooq.org/
