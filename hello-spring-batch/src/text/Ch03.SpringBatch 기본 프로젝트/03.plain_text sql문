@@ -1,0 +1,23 @@
+CREATE TABLE plain_text (
+	id int(11) NOT NULL AUTO_INCREMENT,
+	text varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+	PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+select * from plain_text
+
+insert into plain_text (text) values ('apple');
+insert into plain_text (text) values ('banana');
+insert into plain_text (text) values ('carrot');
+insert into plain_text (text) values ('dessert');
+insert into plain_text (text) values ('egg');
+insert into plain_text (text) values ('fish');
+insert into plain_text (text) values ('goose');
+
+
+
+CREATE TABLE result_text (
+	id int(11) NOT NULL AUTO_INCREMENT,
+	text varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+	PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci

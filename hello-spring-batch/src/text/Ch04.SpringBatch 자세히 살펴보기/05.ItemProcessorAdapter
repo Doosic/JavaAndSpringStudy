@@ -1,0 +1,15 @@
+
+    * ItemProcessorAdaptor
+      데이터를 가공하는 역할을 하기때문에
+      비즈니스 로직에 근접한 로직들이 보통 프로세서에 위치한다.
+
+      - 기존 PlayerDto의 상태이다.
+      PlayerDto(ID=AbduKa00, lastName=Abdul-Jabbar, firstName=Karim, position=rb, birthYear=1974, debutYear=1996)
+
+      - PlayerDto에서 데이터 가공로직인 ItemProcessor를 거쳐 salary가 계산되어 나온 모습이다.
+      PlayerSalaryDto(ID=AbduKa00, lastName=Abdul-Jabbar, firstName=Karim, position=rb, birthYear=1974, debutYear=1996, salary=48000000)
+      PlayerSalaryDto(ID=AbduRa00, lastName=Abdullah, firstName=Rabih, position=rb, birthYear=1975, debutYear=1999, salary=47000000)
+      PlayerSalaryDto(ID=AberWa00, lastName=Abercrombie, firstName=Walter, position=rb, birthYear=1959, debutYear=1982, salary=63000000)
+      PlayerSalaryDto(ID=AbraDa00, lastName=Abramowicz, firstName=Danny, position=wr, birthYear=1945, debutYear=1967, salary=77000000)
+      PlayerSalaryDto(ID=AdamBo00, lastName=Adams, firstName=Bob, position=te, birthYear=1946, debutYear=1969, salary=76000000)
+      PlayerSalaryDto(ID=AdamCh00, lastName=Adams, firstName=Charlie, position=wr, birthYear=1979, debutYear=2003, salary=43000000)
